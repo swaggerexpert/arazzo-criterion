@@ -42,6 +42,8 @@ It supports the `simple` Criterion Object condition defined in the following Ara
   - [Usage](#usage)
     - [Parsing](#parsing)
       - [Translators](#translators)
+      - [Statistics](#statistics)
+      - [Tracing](#tracing)
     - [Validation](#validation)
     - [Evaluation](#evaluation)
     - [Errors](#errors)
@@ -117,6 +119,45 @@ import { parse, CSTTranslator, ASTTranslator } from '@swaggerexpert/arazzo-crite
 parse('$statusCode == 200', { translator: new ASTTranslator() }); // default
 parse('$statusCode == 200', { translator: new CSTTranslator() }); // Concrete Syntax Tree
 parse('$statusCode == 200', { translator: null });                // validation only
+```
+
+##### Statistics
+
+`parse` returns additional statistical information about the parsing process.
+Collection of the statistics can be enabled by setting the `stats` option to `true`.
+
+```js
+import { parse } from '@swaggerexpert/arazzo-criterion';
+
+const { stats } = parse('$statusCode == 200', { stats: true });
+
+stats.displayStats(); // returns operator statistics as string
+```
+
+##### Tracing
+
+`parse` returns additional tracing information about the parsing process.
+Tracing can be enabled by setting the `trace` option to `true`. Tracing is essential
+for debugging failed parses or analyzing rule execution flow.
+
+```js
+import { parse } from '@swaggerexpert/arazzo-criterion';
+
+const { result, trace } = parse('$statusCode <', { trace: true });
+
+result.success; // false
+trace.displayTrace(); // returns trace information as string
+```
+
+Tracing also allows you to infer expected tokens at a failure point. This is useful for generating meaningful syntax error messages.
+
+```js
+import { parse } from '@swaggerexpert/arazzo-criterion';
+
+const { trace } = parse('$statusCode nonsense', { trace: true });
+
+const expectations = trace.inferExpectations();
+console.log(expectations.toString()); // the tokens that could appear at the failure point
 ```
 
 #### Validation
