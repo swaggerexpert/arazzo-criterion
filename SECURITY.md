@@ -1,13 +1,12 @@
 # Security Policy
 
-If you believe you've found an exploitable security issue in @swaggerexpert/arazzo-runtime-expression, please don't create a public issue.
+If you believe you've found an exploitable security issue in @swaggerexpert/arazzo-criterion, please don't create a public issue.
 
 ## Supported Versions
 
 | Version | Supported          |
 |---------|--------------------|
-| ^1.0.0  | :x:                |
-| ^2.0.0  | :white_check_mark: |
+| ^1.0.0  | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
