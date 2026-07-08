@@ -251,14 +251,15 @@ export type Opcode =
 
 export type UDT = Record<string, never>;
 
-export interface ArazzoCriterionErrorOptions extends ErrorOptions {
+export interface ArazzoCriterionErrorOptions {
+  cause?: unknown;
   [key: string]: unknown;
 }
 
 export class ArazzoCriterionError extends Error {
   constructor(message?: string, options?: ArazzoCriterionErrorOptions);
-  override name: string;
-  override cause?: unknown;
+  name: string;
+  cause?: unknown;
 }
 
 export class ArazzoCriterionParseError extends ArazzoCriterionError {
