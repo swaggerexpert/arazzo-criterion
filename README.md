@@ -399,8 +399,6 @@ ALPHA          = %x41-5A / %x61-7A   ; A-Z / a-z
 DIGIT          = %x30-39             ; 0-9
 ```
 
-The canonical, fully-commented grammar (including the RFC 9535 attribution and the boundary rationale) lives in [`src/grammar.bnf`](https://github.com/swaggerexpert/arazzo-criterion/blob/main/src/grammar.bnf).
-
 ## License
 
 `@swaggerexpert/arazzo-criterion` is licensed under [Apache 2.0 license](https://github.com/swaggerexpert/arazzo-criterion/blob/main/LICENSE).
