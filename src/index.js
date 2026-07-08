@@ -6,6 +6,7 @@ export { default as evaluate } from './evaluate/index.js';
 
 export { default as CSTTranslator } from './parse/translators/CSTTranslator.js';
 export { default as ASTTranslator } from './parse/translators/ASTTranslator/index.js';
+export { default as XMLTranslator } from './parse/translators/XMLTranslator.js';
 export { default as Trace } from './parse/trace/Trace.js';
 
 export { default as ArazzoCriterionError } from './errors/ArazzoCriterionError.js';

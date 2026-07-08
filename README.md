@@ -48,7 +48,7 @@ It supports the `simple` Criterion Object condition defined in the following Ara
     - [Evaluation](#evaluation)
     - [Errors](#errors)
     - [Grammar](#grammar)
-- [The `simple` condition grammar](#the-simple-condition-grammar)
+- [More about the `simple` criterion condition](#more-about-the-simple-criterion-condition)
 - [License](#license)
 
 ## Getting started
@@ -122,6 +122,8 @@ import { parse, ASTTranslator } from '@swaggerexpert/arazzo-criterion';
 const { tree: ast } = parse('$statusCode == 200', { translator: new ASTTranslator() });
 ```
 
+AST tree has a shape documented by [TypeScript typings (ConditionAST)](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts).
+
 The AST produced for `$statusCode == 200 && $response.body.data != null` is:
 
 ```js
@@ -162,7 +164,16 @@ AST node types:
 
 A runtime expression with **no** accessors is represented as a `RuntimeExpression` node directly; a `RuntimeExpressionNavigation` node appears only when there is at least one `.member` / `[index]` accessor.
 
-The full AST shape is documented by [TypeScript typings (ConditionAST)](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts).
+###### XML translator
+
+An XML string representation of the parse tree is available on the parse result
+when an instance of `XMLTranslator` is provided via the `translator` option to the `parse` function.
+
+```js
+import { parse, XMLTranslator } from '@swaggerexpert/arazzo-criterion';
+
+const { tree: xml } = parse('$statusCode == 200', { translator: new XMLTranslator() });
+```
 
 ##### Statistics
 
@@ -291,15 +302,94 @@ grammar.toString();
 String(grammar);
 ```
 
-## The `simple` condition grammar
+## More about the `simple` criterion condition
 
 The logical / comparison spine follows the structure of [RFC 9535](https://www.rfc-editor.org/rfc/rfc9535) (JSONPath filter expressions):
 a logical layer (`||`, `&&`, `!`, grouping) that composes only booleans, over a flat, non-recursive comparison layer (`comparable OP comparable`).
 This rejects nonsensical forms such as chained comparisons (`a < b < c`) at the grammar level.
 
-Operands are Arazzo Runtime Expressions, optionally followed by property-dereference (`.member`) and index (`[n]`) accessors. Each runtime expression stops at its own natural boundary (e.g. `$response.body` ends at `body`), so the trailing `.data` in `$response.body.data` is captured as a criterion accessor rather than being absorbed into the expression.
+Operands are Arazzo Runtime Expressions, optionally followed by property-dereference (`.member`) and index (`[n]`) accessors. The grammar matches an
+operand as a single bounded token; the runtime-expression base and the trailing accessors are separated during AST construction by delegating the base
+to [@swaggerexpert/arazzo-runtime-expression](https://github.com/swaggerexpert/arazzo-runtime-expression) (see the grammar header note for why the
+boundary cannot be expressed in a context-free grammar).
 
-See [`src/grammar.bnf`](./src/grammar.bnf) for the full ABNF.
+The `simple` criterion condition is defined by the following [ABNF](https://tools.ietf.org/html/rfc5234) (RFC 5234) syntax:
+
+```abnf
+; Arazzo Criterion Object - "simple" condition ABNF syntax
+; https://spec.openapis.org/arazzo/v1.1.0.html#criterion-object
+
+; ---------------------------------------------------------------------------
+; Criterion condition (simple type)
+; ---------------------------------------------------------------------------
+
+condition        = S logical-expr S
+
+logical-expr     = logical-or-expr
+logical-or-expr  = logical-and-expr *( S "||" S logical-and-expr )
+logical-and-expr = basic-expr *( S "&&" S basic-expr )
+
+basic-expr       = paren-expr / comparison-expr / test-expr
+paren-expr       = [ logical-not-op S ] "(" S logical-expr S ")"
+test-expr        = [ logical-not-op S ] comparable
+comparison-expr  = comparable S comparison-op S comparable
+
+logical-not-op   = "!"
+comparison-op    = "==" / "!=" / "<=" / ">=" / "<" / ">"
+
+; ---------------------------------------------------------------------------
+; Comparables: literals or operands (runtime expression + navigation, matched
+; as one bounded token)
+; ---------------------------------------------------------------------------
+
+comparable                 = literal / runtime-expression-operand
+runtime-expression-operand = "$" 1*operand-char
+operand-char               = %x22-25 / %x27 / %x2A-3B / %x3F-5A / %x5B-5D / %x5E-7A / %x7E / %x80-10FFFF
+
+; Navigation over the resolved runtime-expression value (secondary entry point;
+; parsed from the operand remainder during AST construction).
+runtime-expression-navigation = 1*( member-access / index-access )
+member-access                 = "." member-name
+index-access                  = "[" index "]"
+member-name                   = 1*( ALPHA / DIGIT / "_" / "-" )
+index                         = 1*DIGIT
+
+; ---------------------------------------------------------------------------
+; Literals
+; ---------------------------------------------------------------------------
+
+literal          = number / string / boolean / null
+boolean          = "true" / "false"
+null             = "null"
+
+number           = ( int / "-0" ) [ frac ] [ exp ]
+int              = "0" / ( [ "-" ] DIGIT1 *DIGIT )
+frac             = "." 1*DIGIT
+exp              = ( "e" / "E" ) [ "-" / "+" ] 1*DIGIT
+DIGIT1           = %x31-39   ; 1-9 non-zero digit
+
+; single-quoted; a literal quote is escaped by doubling it ('')
+string           = squote *( escaped-quote / string-char ) squote
+escaped-quote    = squote squote                 ; '' represents a single '
+string-char      = %x20-26 / %x28-10FFFF         ; any char except squote (%x27)
+squote           = %x27                           ; '
+
+; ---------------------------------------------------------------------------
+; Whitespace (optional blank space), per RFC 9535
+; ---------------------------------------------------------------------------
+
+S                = *B
+B                = %x20 / %x09 / %x0A / %x0D      ; space, tab, LF, CR
+
+; ---------------------------------------------------------------------------
+; Core rules (RFC 5234 B.1)
+; ---------------------------------------------------------------------------
+
+ALPHA          = %x41-5A / %x61-7A   ; A-Z / a-z
+DIGIT          = %x30-39             ; 0-9
+```
+
+The canonical, fully-commented grammar (including the RFC 9535 attribution and the boundary rationale) lives in [`src/grammar.bnf`](https://github.com/swaggerexpert/arazzo-criterion/blob/main/src/grammar.bnf).
 
 ## License
 

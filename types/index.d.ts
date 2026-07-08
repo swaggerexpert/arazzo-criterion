@@ -16,7 +16,7 @@ export interface CSTNode {
  * Translator base interface
  */
 export interface Translator {
-  getTree(): CSTNode | ConditionAST | undefined;
+  getTree(): CSTNode | ConditionAST | string | undefined;
 }
 
 /**
@@ -25,6 +25,14 @@ export interface Translator {
 export class CSTTranslator implements Translator {
   constructor();
   getTree(): CSTNode;
+}
+
+/**
+ * XMLTranslator - Produces an XML string representation of the parse tree
+ */
+export class XMLTranslator implements Translator {
+  constructor();
+  getTree(): string;
 }
 
 /**
@@ -182,7 +190,7 @@ export interface ParseResultMeta {
 /**
  * Parse result
  */
-export interface ParseResult<T = CSTNode | ConditionAST | undefined> {
+export interface ParseResult<T = CSTNode | ConditionAST | string | undefined> {
   readonly result: ParseResultMeta;
   readonly tree: T;
   readonly stats: Stats | undefined;
@@ -200,6 +208,10 @@ export function parse(
   condition: string,
   options: ParseOptions<CSTTranslator>,
 ): ParseResult<CSTNode>;
+export function parse(
+  condition: string,
+  options: ParseOptions<XMLTranslator>,
+): ParseResult<string>;
 export function parse(condition: string, options: ParseOptions<null>): ParseResult<undefined>;
 
 /**
