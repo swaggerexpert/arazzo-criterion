@@ -1,0 +1,165 @@
+# @swaggerexpert/arazzo-criterion
+
+[Arazzo Criterion Objects](https://spec.openapis.org/arazzo/v1.1.0.html#criterion-object) specify the conditions used in `successCriteria` of a [Step Object](https://spec.openapis.org/arazzo/v1.1.0.html#step-object)
+and in the `criteria` of Success / Failure Action Objects.
+
+`@swaggerexpert/arazzo-criterion` is a **parser**, **validator** and **evaluator** for the **`simple`** type of Arazzo Criterion conditions.
+
+The `simple` condition syntax combines literals, comparison and logical operators, property de-reference / index accessors, and [Arazzo Runtime Expressions](https://spec.openapis.org/arazzo/v1.1.0.html#runtime-expressions).
+Runtime Expression operands are parsed by delegating to [@swaggerexpert/arazzo-runtime-expression](https://github.com/swaggerexpert/arazzo-runtime-expression), so their sub-ASTs match that package exactly.
+
+> The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** for this package.
+
+## Table of Contents
+
+- [Getting started](#getting-started)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [Parsing](#parsing)
+      - [Translators](#translators)
+    - [Validation](#validation)
+    - [Evaluation](#evaluation)
+    - [Errors](#errors)
+    - [Grammar](#grammar)
+- [The `simple` condition grammar](#the-simple-condition-grammar)
+- [License](#license)
+
+## Getting started
+
+### Installation
+
+```sh
+ $ npm install @swaggerexpert/arazzo-criterion
+```
+
+### Usage
+
+#### Parsing
+
+`parse` produces an Abstract Syntax Tree (AST) by default.
+
+```js
+import { parse } from '@swaggerexpert/arazzo-criterion';
+
+const { result, tree } = parse('$statusCode == 200 && $response.body.data != null');
+
+result.success; // => true
+tree;
+/*
+{
+  type: 'LogicalExpression',
+  operator: '&&',
+  left: {
+    type: 'BinaryExpression',
+    operator: '==',
+    left: { type: 'RuntimeExpression', text: '$statusCode', expression: { type: 'StatusCodeExpression' } },
+    right: { type: 'Literal', valueType: 'number', value: 200 },
+  },
+  right: {
+    type: 'BinaryExpression',
+    operator: '!=',
+    left: {
+      type: 'RuntimeExpressionNavigation',
+      expression: { type: 'RuntimeExpression', text: '$response.body', expression: {  ...  } },
+      navigation: [{ type: 'MemberAccess', name: 'data' }],
+    },
+    right: { type: 'Literal', valueType: 'null', value: null },
+  },
+}
+*/
+```
+
+##### AST node types
+
+| Node | Shape |
+| --- | --- |
+| `LogicalExpression` | `{ operator: '&&' \| '\|\|', left, right }` |
+| `UnaryExpression` | `{ operator: '!', argument }` |
+| `BinaryExpression` | `{ operator: '==' \| '!=' \| '<' \| '<=' \| '>' \| '>=', left, right }` |
+| `Literal` | `{ valueType: 'number' \| 'string' \| 'boolean' \| 'null', value }` |
+| `RuntimeExpression` | `{ text, expression }` (`expression` is the runtime-expression sub-AST) |
+| `RuntimeExpressionNavigation` | `{ expression: RuntimeExpression, navigation: (MemberAccess \| IndexAccess)[] }` |
+| `MemberAccess` | `{ name }` (from `.property`) |
+| `IndexAccess` | `{ value }` (from `[n]`, 0-based) |
+
+A runtime expression with **no** accessors is represented as a `RuntimeExpression` node directly; a `RuntimeExpressionNavigation` node appears only when there is at least one `.member` / `[index]` accessor.
+
+##### Translators
+
+```js
+import { parse, CSTTranslator, ASTTranslator } from '@swaggerexpert/arazzo-criterion';
+
+parse('$statusCode == 200', { translator: new ASTTranslator() }); // default
+parse('$statusCode == 200', { translator: new CSTTranslator() }); // Concrete Syntax Tree
+parse('$statusCode == 200', { translator: null });                // validation only
+```
+
+#### Validation
+
+```js
+import { test } from '@swaggerexpert/arazzo-criterion';
+
+test('$statusCode == 200'); // => true
+test('$statusCode < 200 < 300'); // => false (chained comparisons are invalid)
+```
+
+#### Evaluation
+
+`evaluate` runs a condition against caller-supplied values. Because a criterion only becomes concrete once its runtime expressions are resolved against a live context, you provide a `resolve` function. It receives the runtime expression **string** and its parsed **sub-AST**, and returns the concrete value — so you can key on either the raw string or dispatch on the AST `type`.
+
+```js
+import { evaluate } from '@swaggerexpert/arazzo-criterion';
+
+const context = {
+  $statusCode: 200,
+  '$response.body': { status: 'Available', data: [{ id: 42 }] },
+};
+const resolve = (expression, ast) => context[expression];
+
+evaluate('$statusCode == 200', { resolve }); // => true
+evaluate("$response.body.status == 'available'", { resolve }); // => true (case-insensitive)
+evaluate('$response.body.data[0].id > 10', { resolve }); // => true
+```
+
+Evaluation follows the "loose comparison" rules from the Arazzo specification:
+
+- string comparisons are **case-insensitive**;
+- numeric strings are **coerced** to numbers when compared with a number;
+- `null` is equal only to `null`; any relational comparison involving `null` is `false`;
+- a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
+
+#### Errors
+
+```js
+import {
+  ArazzoCriterionError,
+  ArazzoCriterionParseError,
+  ArazzoCriterionEvaluateError,
+} from '@swaggerexpert/arazzo-criterion';
+```
+
+`ArazzoCriterionParseError` and `ArazzoCriterionEvaluateError` both extend `ArazzoCriterionError`.
+
+#### Grammar
+
+```js
+import { Grammar } from '@swaggerexpert/arazzo-criterion';
+
+const grammar = new Grammar();
+```
+
+## The `simple` condition grammar
+
+The logical / comparison spine follows the structure of [RFC 9535](https://www.rfc-editor.org/rfc/rfc9535) (JSONPath filter expressions):
+a logical layer (`||`, `&&`, `!`, grouping) that composes only booleans, over a flat, non-recursive comparison layer (`comparable OP comparable`).
+This rejects nonsensical forms such as chained comparisons (`a < b < c`) at the grammar level.
+
+Operands are Arazzo Runtime Expressions, optionally followed by property-dereference (`.member`) and index (`[n]`) accessors. Each runtime expression stops at its own natural boundary (e.g. `$response.body` ends at `body`), so the trailing `.data` in `$response.body.data` is captured as a criterion accessor rather than being absorbed into the expression.
+
+See [`src/grammar.bnf`](./src/grammar.bnf) for the full ABNF.
+
+## License
+
+`@swaggerexpert/arazzo-criterion` is licensed under [Apache 2.0 license](https://github.com/swaggerexpert/arazzo-criterion/blob/main/LICENSE).
+`@swaggerexpert/arazzo-criterion` comes with an explicit [NOTICE](https://github.com/swaggerexpert/arazzo-criterion/blob/main/NOTICE) file
+containing additional legal notices and information.
