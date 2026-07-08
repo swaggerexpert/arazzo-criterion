@@ -63,16 +63,68 @@ It supports the `simple` Criterion Object condition defined in the following Ara
 
 #### Parsing
 
-`parse` produces an Abstract Syntax Tree (AST) by default.
+Parsing a criterion condition is as simple as importing the **parse** function and calling it.
 
 ```js
 import { parse } from '@swaggerexpert/arazzo-criterion';
 
-const { result, tree } = parse('$statusCode == 200 && $response.body.data != null');
+const parseResult = parse('$statusCode == 200 && $response.body.data != null');
+```
 
-result.success; // => true
-tree;
-/*
+**parseResult** variable has the following shape:
+
+```
+{
+  result: <ParseResult['result']>,
+  tree: <ParseResult['tree']>,
+  stats: <ParseResult['stats']>,
+  trace: <ParseResult['trace']>,
+}
+```
+
+[TypeScript typings](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts) are available for all fields attached to the parse result object returned by the `parse` function.
+
+##### Translators
+
+`@swaggerexpert/arazzo-criterion` provides several translators to convert the parse result into different tree representations.
+
+###### CST translator
+
+[Concrete Syntax Tree](https://en.wikipedia.org/wiki/Parse_tree) (Parse tree) representation is available on the parse result
+when an instance of `CSTTranslator` is provided via the `translator` option to the `parse` function.
+CST is suitable to be consumed by other tools like IDEs, editors, etc...
+
+```js
+import { parse, CSTTranslator } from '@swaggerexpert/arazzo-criterion';
+
+const { tree: cst } = parse('$statusCode == 200', { translator: new CSTTranslator() });
+```
+
+CST tree has a shape documented by [TypeScript typings (CSTNode)](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts).
+
+###### AST translator
+
+**Default translator**. [Abstract Syntax Tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) representation is available on the parse result
+by default or when an instance of `ASTTranslator` is provided via the `translator` option to the `parse` function.
+AST is suitable to be consumed by implementations that need to analyze or evaluate the condition.
+
+```js
+import { parse } from '@swaggerexpert/arazzo-criterion';
+
+const { tree: ast } = parse('$statusCode == 200 && $response.body.data != null');
+```
+
+or
+
+```js
+import { parse, ASTTranslator } from '@swaggerexpert/arazzo-criterion';
+
+const { tree: ast } = parse('$statusCode == 200', { translator: new ASTTranslator() });
+```
+
+The AST produced for `$statusCode == 200 && $response.body.data != null` is:
+
+```js
 {
   type: 'LogicalExpression',
   operator: '&&',
@@ -93,10 +145,9 @@ tree;
     right: { type: 'Literal', valueType: 'null', value: null },
   },
 }
-*/
 ```
 
-##### AST node types
+AST node types:
 
 | Node | Shape |
 | --- | --- |
@@ -111,15 +162,7 @@ tree;
 
 A runtime expression with **no** accessors is represented as a `RuntimeExpression` node directly; a `RuntimeExpressionNavigation` node appears only when there is at least one `.member` / `[index]` accessor.
 
-##### Translators
-
-```js
-import { parse, CSTTranslator, ASTTranslator } from '@swaggerexpert/arazzo-criterion';
-
-parse('$statusCode == 200', { translator: new ASTTranslator() }); // default
-parse('$statusCode == 200', { translator: new CSTTranslator() }); // Concrete Syntax Tree
-parse('$statusCode == 200', { translator: null });                // validation only
-```
+The full AST shape is documented by [TypeScript typings (ConditionAST)](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts).
 
 ##### Statistics
 
@@ -196,6 +239,9 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 
 #### Errors
 
+`@swaggerexpert/arazzo-criterion` provides a structured error class hierarchy,
+enabling precise error handling across parsing and evaluation.
+
 ```js
 import {
   ArazzoCriterionError,
@@ -204,14 +250,45 @@ import {
 } from '@swaggerexpert/arazzo-criterion';
 ```
 
-`ArazzoCriterionParseError` and `ArazzoCriterionEvaluateError` both extend `ArazzoCriterionError`.
+**ArazzoCriterionError** is the base class for all errors. **ArazzoCriterionParseError** wraps an unexpected error
+raised during parsing, and **ArazzoCriterionEvaluateError** is thrown by `evaluate` (for example, when the condition
+is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`.
+
+```js
+import { evaluate, ArazzoCriterionEvaluateError } from '@swaggerexpert/arazzo-criterion';
+
+try {
+  evaluate('== 200', { resolve: () => undefined }); // invalid condition
+} catch (error) {
+  if (error instanceof ArazzoCriterionEvaluateError) {
+    console.log(error.condition); // the condition that failed: "== 200"
+  }
+}
+```
+
+Note: a syntactically invalid condition passed to `parse` does **not** throw - it returns a result with
+`result.success === false` and `tree === undefined`. Use `test` for a simple boolean validity check.
 
 #### Grammar
+
+New grammar instance can be created in the following way:
 
 ```js
 import { Grammar } from '@swaggerexpert/arazzo-criterion';
 
 const grammar = new Grammar();
+```
+
+To obtain the original ABNF grammar as a string:
+
+```js
+import { Grammar } from '@swaggerexpert/arazzo-criterion';
+
+const grammar = new Grammar();
+
+grammar.toString();
+// or
+String(grammar);
 ```
 
 ## The `simple` condition grammar
