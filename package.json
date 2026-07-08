@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Arazzo Criterion Object (simple type) parser, validator and evaluator.",
   "main": "./cjs/index.cjs",
   "types": "./types/index.d.ts",
@@ -63,7 +63,7 @@
     "SECURITY.md"
   ],
   "dependencies": {
-    "@swaggerexpert/arazzo-runtime-expression": "^3.0.0",
+    "@swaggerexpert/arazzo-runtime-expression": "^3.1.0",
     "apg-lite": "^1.0.5"
   },
   "devDependencies": {

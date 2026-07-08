@@ -4,4 +4,4 @@ node_modules/
 .vscode/settings.json
 /cjs
 /es
-/swaggerexpert-arazzo-runtime-expression-*.tgz
+/swaggerexpert-arazzo-criterion-*.tgz

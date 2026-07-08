@@ -16,7 +16,7 @@ jobs:
       attestations: write
     environment:
       name: npm-release
-      url: https://www.npmjs.com/package/@swaggerexpert/arazzo-runtime-expression
+      url: https://www.npmjs.com/package/@swaggerexpert/arazzo-criterion
 
     steps:
       - name: Checkout
