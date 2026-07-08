@@ -11,10 +11,33 @@
 and in the `criteria` of Success and Failure Action Objects.
 
 `@swaggerexpert/arazzo-criterion` is a **parser**, **validator** and **evaluator** for the **`simple`** type of Arazzo Criterion conditions **only**.
-The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** — they delegate to external engines (a regular-expression engine, [@swaggerexpert/jsonpath](https://github.com/swaggerexpert/jsonpath), an XPath engine) and belong in a higher-level evaluator that composes this package with those.
+The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** — they delegate to external engines (a regular-expression engine, a [JSONPath](https://github.com/swaggerexpert/jsonpath) engine, an XPath engine) and belong in a higher-level evaluator that composes this package with those.
 
 The `simple` condition syntax combines literals, comparison and logical operators, property de-reference / index accessors, and [Arazzo Runtime Expressions](https://spec.openapis.org/arazzo/v1.1.0.html#runtime-expressions).
 Runtime Expression operands are parsed by delegating to [@swaggerexpert/arazzo-runtime-expression](https://github.com/swaggerexpert/arazzo-runtime-expression), so their sub-ASTs match that package exactly.
+
+In an Arazzo document, a `simple` criterion appears in a step's `successCriteria` (or an action's `criteria`). The `type` defaults to `simple`, so a criterion is usually just a `condition` string:
+
+```yaml
+steps:
+  - stepId: getPet
+    # ...
+    successCriteria:
+      - condition: $statusCode == 200
+      - condition: $response.body.status == 'available' && $response.body.pets[0].id > 0
+```
+
+Written out as full Criterion Objects, those two entries are:
+
+```yaml
+successCriteria:
+  - condition: $statusCode == 200
+    type: simple                      # the default; may be omitted
+  - condition: $response.body.status == 'available' && $response.body.pets[0].id > 0
+    type: simple
+```
+
+This library parses, validates and evaluates the `condition` string of such `simple` criteria.
 
 It supports the `simple` Criterion Object condition defined in the following Arazzo specification versions:
 
