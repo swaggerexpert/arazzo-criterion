@@ -149,19 +149,6 @@ The AST produced for `$statusCode == 200 && $response.body.data != null` is:
 }
 ```
 
-AST node types:
-
-| Node | Shape |
-| --- | --- |
-| `LogicalExpression` | `{ operator: '&&' \| '\|\|', left, right }` |
-| `UnaryExpression` | `{ operator: '!', argument }` |
-| `BinaryExpression` | `{ operator: '==' \| '!=' \| '<' \| '<=' \| '>' \| '>=', left, right }` |
-| `Literal` | `{ valueType: 'number' \| 'string' \| 'boolean' \| 'null', value }` |
-| `RuntimeExpression` | `{ text, expression }` (`expression` is the runtime-expression sub-AST) |
-| `RuntimeExpressionNavigation` | `{ expression: RuntimeExpression, navigation: (MemberAccess \| IndexAccess)[] }` |
-| `MemberAccess` | `{ name }` (from `.property`) |
-| `IndexAccess` | `{ value }` (from `[n]`, 0-based) |
-
 A runtime expression with **no** accessors is represented as a `RuntimeExpression` node directly; a `RuntimeExpressionNavigation` node appears only when there is at least one `.member` / `[index]` accessor.
 
 ###### XML translator
