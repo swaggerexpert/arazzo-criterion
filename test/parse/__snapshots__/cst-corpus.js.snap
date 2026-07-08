@@ -1,0 +1,2394 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`parse cst-corpus   $statusCode==200   1`] = `
+{
+  "type": "condition",
+  "text": "  $statusCode==200  ",
+  "start": 0,
+  "length": 20,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode==200",
+      "start": 2,
+      "length": 16,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode==200",
+          "start": 2,
+          "length": 16,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode==200",
+              "start": 2,
+              "length": 16,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 2,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 13,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus !$response.body.active 1`] = `
+{
+  "type": "condition",
+  "text": "!$response.body.active",
+  "start": 0,
+  "length": 22,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "!$response.body.active",
+      "start": 0,
+      "length": 22,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "!$response.body.active",
+          "start": 0,
+          "length": 22,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "!$response.body.active",
+              "start": 0,
+              "length": 22,
+              "children": [
+                {
+                  "type": "logical-not-op",
+                  "text": "!",
+                  "start": 0,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.active",
+                  "start": 1,
+                  "length": 21,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus !($statusCode == 200) 1`] = `
+{
+  "type": "condition",
+  "text": "!($statusCode == 200)",
+  "start": 0,
+  "length": 21,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "!($statusCode == 200)",
+      "start": 0,
+      "length": 21,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "!($statusCode == 200)",
+          "start": 0,
+          "length": 21,
+          "children": [
+            {
+              "type": "paren-expr",
+              "text": "!($statusCode == 200)",
+              "start": 0,
+              "length": 21,
+              "children": [
+                {
+                  "type": "logical-not-op",
+                  "text": "!",
+                  "start": 0,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "logical-or-expr",
+                  "text": "$statusCode == 200",
+                  "start": 2,
+                  "length": 18,
+                  "children": [
+                    {
+                      "type": "logical-and-expr",
+                      "text": "$statusCode == 200",
+                      "start": 2,
+                      "length": 18,
+                      "children": [
+                        {
+                          "type": "comparison-expr",
+                          "text": "$statusCode == 200",
+                          "start": 2,
+                          "length": 18,
+                          "children": [
+                            {
+                              "type": "runtime-expression-operand",
+                              "text": "$statusCode",
+                              "start": 2,
+                              "length": 11,
+                              "children": [],
+                            },
+                            {
+                              "type": "comparison-op",
+                              "text": "==",
+                              "start": 14,
+                              "length": 2,
+                              "children": [],
+                            },
+                            {
+                              "type": "number",
+                              "text": "200",
+                              "start": 17,
+                              "length": 3,
+                              "children": [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $components.parameters.foo == null 1`] = `
+{
+  "type": "condition",
+  "text": "$components.parameters.foo == null",
+  "start": 0,
+  "length": 34,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$components.parameters.foo == null",
+      "start": 0,
+      "length": 34,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$components.parameters.foo == null",
+          "start": 0,
+          "length": 34,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$components.parameters.foo == null",
+              "start": 0,
+              "length": 34,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$components.parameters.foo",
+                  "start": 0,
+                  "length": 26,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 27,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 30,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $inputs.limit == 10 1`] = `
+{
+  "type": "condition",
+  "text": "$inputs.limit == 10",
+  "start": 0,
+  "length": 19,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$inputs.limit == 10",
+      "start": 0,
+      "length": 19,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$inputs.limit == 10",
+          "start": 0,
+          "length": 19,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$inputs.limit == 10",
+              "start": 0,
+              "length": 19,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$inputs.limit",
+                  "start": 0,
+                  "length": 13,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 14,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "10",
+                  "start": 17,
+                  "length": 2,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $inputs.name == 'it''s ok' 1`] = `
+{
+  "type": "condition",
+  "text": "$inputs.name == 'it''s ok'",
+  "start": 0,
+  "length": 26,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$inputs.name == 'it''s ok'",
+      "start": 0,
+      "length": 26,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$inputs.name == 'it''s ok'",
+          "start": 0,
+          "length": 26,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$inputs.name == 'it''s ok'",
+              "start": 0,
+              "length": 26,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$inputs.name",
+                  "start": 0,
+                  "length": 12,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 13,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "string",
+                  "text": "'it''s ok'",
+                  "start": 16,
+                  "length": 10,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $method == null 1`] = `
+{
+  "type": "condition",
+  "text": "$method == null",
+  "start": 0,
+  "length": 15,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$method == null",
+      "start": 0,
+      "length": 15,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$method == null",
+          "start": 0,
+          "length": 15,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$method == null",
+              "start": 0,
+              "length": 15,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$method",
+                  "start": 0,
+                  "length": 7,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 8,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 11,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $outputs.token != null 1`] = `
+{
+  "type": "condition",
+  "text": "$outputs.token != null",
+  "start": 0,
+  "length": 22,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$outputs.token != null",
+      "start": 0,
+      "length": 22,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$outputs.token != null",
+          "start": 0,
+          "length": 22,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$outputs.token != null",
+              "start": 0,
+              "length": 22,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$outputs.token",
+                  "start": 0,
+                  "length": 14,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "!=",
+                  "start": 15,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 18,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $request.body#/id == 1 1`] = `
+{
+  "type": "condition",
+  "text": "$request.body#/id == 1",
+  "start": 0,
+  "length": 22,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$request.body#/id == 1",
+      "start": 0,
+      "length": 22,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$request.body#/id == 1",
+          "start": 0,
+          "length": 22,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$request.body#/id == 1",
+              "start": 0,
+              "length": 22,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$request.body#/id",
+                  "start": 0,
+                  "length": 17,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 18,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "1",
+                  "start": 21,
+                  "length": 1,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $request.header.content-type == null 1`] = `
+{
+  "type": "condition",
+  "text": "$request.header.content-type == null",
+  "start": 0,
+  "length": 36,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$request.header.content-type == null",
+      "start": 0,
+      "length": 36,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$request.header.content-type == null",
+          "start": 0,
+          "length": 36,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$request.header.content-type == null",
+              "start": 0,
+              "length": 36,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$request.header.content-type",
+                  "start": 0,
+                  "length": 28,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 29,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 32,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $request.path.id == 5 1`] = `
+{
+  "type": "condition",
+  "text": "$request.path.id == 5",
+  "start": 0,
+  "length": 21,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$request.path.id == 5",
+      "start": 0,
+      "length": 21,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$request.path.id == 5",
+          "start": 0,
+          "length": 21,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$request.path.id == 5",
+              "start": 0,
+              "length": 21,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$request.path.id",
+                  "start": 0,
+                  "length": 16,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 17,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "5",
+                  "start": 20,
+                  "length": 1,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $request.query.limit == 10 1`] = `
+{
+  "type": "condition",
+  "text": "$request.query.limit == 10",
+  "start": 0,
+  "length": 26,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$request.query.limit == 10",
+      "start": 0,
+      "length": 26,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$request.query.limit == 10",
+          "start": 0,
+          "length": 26,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$request.query.limit == 10",
+              "start": 0,
+              "length": 26,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$request.query.limit",
+                  "start": 0,
+                  "length": 20,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 21,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "10",
+                  "start": 24,
+                  "length": 2,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.active 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.active",
+  "start": 0,
+  "length": 21,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.active",
+      "start": 0,
+      "length": 21,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.active",
+          "start": 0,
+          "length": 21,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "$response.body.active",
+              "start": 0,
+              "length": 21,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.active",
+                  "start": 0,
+                  "length": 21,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.amount == -3.14 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.amount == -3.14",
+  "start": 0,
+  "length": 30,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.amount == -3.14",
+      "start": 0,
+      "length": 30,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.amount == -3.14",
+          "start": 0,
+          "length": 30,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.amount == -3.14",
+              "start": 0,
+              "length": 30,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.amount",
+                  "start": 0,
+                  "length": 21,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 22,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "-3.14",
+                  "start": 25,
+                  "length": 5,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.amount == 1.5e3 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.amount == 1.5e3",
+  "start": 0,
+  "length": 30,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.amount == 1.5e3",
+      "start": 0,
+      "length": 30,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.amount == 1.5e3",
+          "start": 0,
+          "length": 30,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.amount == 1.5e3",
+              "start": 0,
+              "length": 30,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.amount",
+                  "start": 0,
+                  "length": 21,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 22,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "1.5e3",
+                  "start": 25,
+                  "length": 5,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.count == 0 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.count == 0",
+  "start": 0,
+  "length": 25,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.count == 0",
+      "start": 0,
+      "length": 25,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.count == 0",
+          "start": 0,
+          "length": 25,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.count == 0",
+              "start": 0,
+              "length": 25,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.count",
+                  "start": 0,
+                  "length": 20,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 21,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "0",
+                  "start": 24,
+                  "length": 1,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.data != null 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.data != null",
+  "start": 0,
+  "length": 27,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.data != null",
+      "start": 0,
+      "length": 27,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.data != null",
+          "start": 0,
+          "length": 27,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.data != null",
+              "start": 0,
+              "length": 27,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.data",
+                  "start": 0,
+                  "length": 19,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "!=",
+                  "start": 20,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 23,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.data[0].id > 10 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.data[0].id > 10",
+  "start": 0,
+  "length": 30,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.data[0].id > 10",
+      "start": 0,
+      "length": 30,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.data[0].id > 10",
+          "start": 0,
+          "length": 30,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.data[0].id > 10",
+              "start": 0,
+              "length": 30,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.data[0].id",
+                  "start": 0,
+                  "length": 25,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": ">",
+                  "start": 26,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "10",
+                  "start": 28,
+                  "length": 2,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.items[2] == null 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.items[2] == null",
+  "start": 0,
+  "length": 31,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.items[2] == null",
+      "start": 0,
+      "length": 31,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.items[2] == null",
+          "start": 0,
+          "length": 31,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.items[2] == null",
+              "start": 0,
+              "length": 31,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.items[2]",
+                  "start": 0,
+                  "length": 23,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 24,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 27,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $response.body.status == 'available' 1`] = `
+{
+  "type": "condition",
+  "text": "$response.body.status == 'available'",
+  "start": 0,
+  "length": 36,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$response.body.status == 'available'",
+      "start": 0,
+      "length": 36,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$response.body.status == 'available'",
+          "start": 0,
+          "length": 36,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.status == 'available'",
+              "start": 0,
+              "length": 36,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.status",
+                  "start": 0,
+                  "length": 21,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 22,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "string",
+                  "text": "'available'",
+                  "start": 25,
+                  "length": 11,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $self == null 1`] = `
+{
+  "type": "condition",
+  "text": "$self == null",
+  "start": 0,
+  "length": 13,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$self == null",
+      "start": 0,
+      "length": 13,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$self == null",
+          "start": 0,
+          "length": 13,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$self == null",
+              "start": 0,
+              "length": 13,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$self",
+                  "start": 0,
+                  "length": 5,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 6,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 9,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $sourceDescriptions.pet.getPet == null 1`] = `
+{
+  "type": "condition",
+  "text": "$sourceDescriptions.pet.getPet == null",
+  "start": 0,
+  "length": 38,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$sourceDescriptions.pet.getPet == null",
+      "start": 0,
+      "length": 38,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$sourceDescriptions.pet.getPet == null",
+          "start": 0,
+          "length": 38,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$sourceDescriptions.pet.getPet == null",
+              "start": 0,
+              "length": 38,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$sourceDescriptions.pet.getPet",
+                  "start": 0,
+                  "length": 30,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 31,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 34,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode != 200 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode != 200",
+  "start": 0,
+  "length": 18,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode != 200",
+      "start": 0,
+      "length": 18,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode != 200",
+          "start": 0,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode != 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "!=",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode < 600 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode < 600",
+  "start": 0,
+  "length": 17,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode < 600",
+      "start": 0,
+      "length": 17,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode < 600",
+          "start": 0,
+          "length": 17,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode < 600",
+              "start": 0,
+              "length": 17,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "<",
+                  "start": 12,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "600",
+                  "start": 14,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode <= 599 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode <= 599",
+  "start": 0,
+  "length": 18,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode <= 599",
+      "start": 0,
+      "length": 18,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode <= 599",
+          "start": 0,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode <= 599",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "<=",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "599",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode == 200 && $response.body.data != null 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode == 200 && $response.body.data != null",
+  "start": 0,
+  "length": 49,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode == 200 && $response.body.data != null",
+      "start": 0,
+      "length": 49,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode == 200 && $response.body.data != null",
+          "start": 0,
+          "length": 49,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode == 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+            {
+              "type": "comparison-expr",
+              "text": "$response.body.data != null",
+              "start": 22,
+              "length": 27,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body.data",
+                  "start": 22,
+                  "length": 19,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "!=",
+                  "start": 42,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 45,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode == 200 || $statusCode == 201 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode == 200 || $statusCode == 201",
+  "start": 0,
+  "length": 40,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode == 200 || $statusCode == 201",
+      "start": 0,
+      "length": 40,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode == 200",
+          "start": 0,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode == 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode == 201",
+          "start": 22,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode == 201",
+              "start": 22,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 22,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 34,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "201",
+                  "start": 37,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode == 200 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode == 200",
+  "start": 0,
+  "length": 18,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode == 200",
+      "start": 0,
+      "length": 18,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode == 200",
+          "start": 0,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode == 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode > 199 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode > 199",
+  "start": 0,
+  "length": 17,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode > 199",
+      "start": 0,
+      "length": 17,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode > 199",
+          "start": 0,
+          "length": 17,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode > 199",
+              "start": 0,
+              "length": 17,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": ">",
+                  "start": 12,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "199",
+                  "start": 14,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode >= 200 && $statusCode < 300 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode >= 200 && $statusCode < 300",
+  "start": 0,
+  "length": 39,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode >= 200 && $statusCode < 300",
+      "start": 0,
+      "length": 39,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode >= 200 && $statusCode < 300",
+          "start": 0,
+          "length": 39,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode >= 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": ">=",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode < 300",
+              "start": 22,
+              "length": 17,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 22,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "<",
+                  "start": 34,
+                  "length": 1,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "300",
+                  "start": 36,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode >= 200 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode >= 200",
+  "start": 0,
+  "length": 18,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode >= 200",
+      "start": 0,
+      "length": 18,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode >= 200",
+          "start": 0,
+          "length": 18,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$statusCode >= 200",
+              "start": 0,
+              "length": 18,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": ">=",
+                  "start": 12,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "number",
+                  "text": "200",
+                  "start": 15,
+                  "length": 3,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $statusCode 1`] = `
+{
+  "type": "condition",
+  "text": "$statusCode",
+  "start": 0,
+  "length": 11,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$statusCode",
+      "start": 0,
+      "length": 11,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$statusCode",
+          "start": 0,
+          "length": 11,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "$statusCode",
+              "start": 0,
+              "length": 11,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$statusCode",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $steps.foo.outputs.flag 1`] = `
+{
+  "type": "condition",
+  "text": "$steps.foo.outputs.flag",
+  "start": 0,
+  "length": 23,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$steps.foo.outputs.flag",
+      "start": 0,
+      "length": 23,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$steps.foo.outputs.flag",
+          "start": 0,
+          "length": 23,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "$steps.foo.outputs.flag",
+              "start": 0,
+              "length": 23,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$steps.foo.outputs.flag",
+                  "start": 0,
+                  "length": 23,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $url == null 1`] = `
+{
+  "type": "condition",
+  "text": "$url == null",
+  "start": 0,
+  "length": 12,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$url == null",
+      "start": 0,
+      "length": 12,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$url == null",
+          "start": 0,
+          "length": 12,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$url == null",
+              "start": 0,
+              "length": 12,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$url",
+                  "start": 0,
+                  "length": 4,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 5,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 8,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus $workflows.foo.outputs.bar == null 1`] = `
+{
+  "type": "condition",
+  "text": "$workflows.foo.outputs.bar == null",
+  "start": 0,
+  "length": 34,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "$workflows.foo.outputs.bar == null",
+      "start": 0,
+      "length": 34,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "$workflows.foo.outputs.bar == null",
+          "start": 0,
+          "length": 34,
+          "children": [
+            {
+              "type": "comparison-expr",
+              "text": "$workflows.foo.outputs.bar == null",
+              "start": 0,
+              "length": 34,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$workflows.foo.outputs.bar",
+                  "start": 0,
+                  "length": 26,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "==",
+                  "start": 27,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 30,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus 'available' 1`] = `
+{
+  "type": "condition",
+  "text": "'available'",
+  "start": 0,
+  "length": 11,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "'available'",
+      "start": 0,
+      "length": 11,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "'available'",
+          "start": 0,
+          "length": 11,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "'available'",
+              "start": 0,
+              "length": 11,
+              "children": [
+                {
+                  "type": "string",
+                  "text": "'available'",
+                  "start": 0,
+                  "length": 11,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus ($statusCode == 200 || $statusCode == 201) && $response.body != null 1`] = `
+{
+  "type": "condition",
+  "text": "($statusCode == 200 || $statusCode == 201) && $response.body != null",
+  "start": 0,
+  "length": 68,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "($statusCode == 200 || $statusCode == 201) && $response.body != null",
+      "start": 0,
+      "length": 68,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "($statusCode == 200 || $statusCode == 201) && $response.body != null",
+          "start": 0,
+          "length": 68,
+          "children": [
+            {
+              "type": "paren-expr",
+              "text": "($statusCode == 200 || $statusCode == 201)",
+              "start": 0,
+              "length": 42,
+              "children": [
+                {
+                  "type": "logical-or-expr",
+                  "text": "$statusCode == 200 || $statusCode == 201",
+                  "start": 1,
+                  "length": 40,
+                  "children": [
+                    {
+                      "type": "logical-and-expr",
+                      "text": "$statusCode == 200",
+                      "start": 1,
+                      "length": 18,
+                      "children": [
+                        {
+                          "type": "comparison-expr",
+                          "text": "$statusCode == 200",
+                          "start": 1,
+                          "length": 18,
+                          "children": [
+                            {
+                              "type": "runtime-expression-operand",
+                              "text": "$statusCode",
+                              "start": 1,
+                              "length": 11,
+                              "children": [],
+                            },
+                            {
+                              "type": "comparison-op",
+                              "text": "==",
+                              "start": 13,
+                              "length": 2,
+                              "children": [],
+                            },
+                            {
+                              "type": "number",
+                              "text": "200",
+                              "start": 16,
+                              "length": 3,
+                              "children": [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      "type": "logical-and-expr",
+                      "text": "$statusCode == 201",
+                      "start": 23,
+                      "length": 18,
+                      "children": [
+                        {
+                          "type": "comparison-expr",
+                          "text": "$statusCode == 201",
+                          "start": 23,
+                          "length": 18,
+                          "children": [
+                            {
+                              "type": "runtime-expression-operand",
+                              "text": "$statusCode",
+                              "start": 23,
+                              "length": 11,
+                              "children": [],
+                            },
+                            {
+                              "type": "comparison-op",
+                              "text": "==",
+                              "start": 35,
+                              "length": 2,
+                              "children": [],
+                            },
+                            {
+                              "type": "number",
+                              "text": "201",
+                              "start": 38,
+                              "length": 3,
+                              "children": [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              "type": "comparison-expr",
+              "text": "$response.body != null",
+              "start": 46,
+              "length": 22,
+              "children": [
+                {
+                  "type": "runtime-expression-operand",
+                  "text": "$response.body",
+                  "start": 46,
+                  "length": 14,
+                  "children": [],
+                },
+                {
+                  "type": "comparison-op",
+                  "text": "!=",
+                  "start": 61,
+                  "length": 2,
+                  "children": [],
+                },
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 64,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus 42 1`] = `
+{
+  "type": "condition",
+  "text": "42",
+  "start": 0,
+  "length": 2,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "42",
+      "start": 0,
+      "length": 2,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "42",
+          "start": 0,
+          "length": 2,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "42",
+              "start": 0,
+              "length": 2,
+              "children": [
+                {
+                  "type": "number",
+                  "text": "42",
+                  "start": 0,
+                  "length": 2,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus false 1`] = `
+{
+  "type": "condition",
+  "text": "false",
+  "start": 0,
+  "length": 5,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "false",
+      "start": 0,
+      "length": 5,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "false",
+          "start": 0,
+          "length": 5,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "false",
+              "start": 0,
+              "length": 5,
+              "children": [
+                {
+                  "type": "boolean",
+                  "text": "false",
+                  "start": 0,
+                  "length": 5,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus null 1`] = `
+{
+  "type": "condition",
+  "text": "null",
+  "start": 0,
+  "length": 4,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "null",
+      "start": 0,
+      "length": 4,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "null",
+          "start": 0,
+          "length": 4,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "null",
+              "start": 0,
+              "length": 4,
+              "children": [
+                {
+                  "type": "null",
+                  "text": "null",
+                  "start": 0,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;
+
+exports[`parse cst-corpus true 1`] = `
+{
+  "type": "condition",
+  "text": "true",
+  "start": 0,
+  "length": 4,
+  "children": [
+    {
+      "type": "logical-or-expr",
+      "text": "true",
+      "start": 0,
+      "length": 4,
+      "children": [
+        {
+          "type": "logical-and-expr",
+          "text": "true",
+          "start": 0,
+          "length": 4,
+          "children": [
+            {
+              "type": "test-expr",
+              "text": "true",
+              "start": 0,
+              "length": 4,
+              "children": [
+                {
+                  "type": "boolean",
+                  "text": "true",
+                  "start": 0,
+                  "length": 4,
+                  "children": [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}
+`;

@@ -1,0 +1,1015 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`parse ast-corpus   $statusCode==200   1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 200,
+  },
+}
+`;
+
+exports[`parse ast-corpus !$response.body.active 1`] = `
+{
+  "type": "UnaryExpression",
+  "operator": "!",
+  "argument": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "active",
+      },
+    ],
+  },
+}
+`;
+
+exports[`parse ast-corpus !($statusCode == 200) 1`] = `
+{
+  "type": "UnaryExpression",
+  "operator": "!",
+  "argument": {
+    "type": "BinaryExpression",
+    "operator": "==",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 200,
+    },
+  },
+}
+`;
+
+exports[`parse ast-corpus $components.parameters.foo == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$components.parameters.foo",
+    "expression": {
+      "type": "ComponentsExpression",
+      "componentType": "parameters",
+      "componentName": "foo",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $inputs.limit == 10 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$inputs.limit",
+    "expression": {
+      "type": "InputsExpression",
+      "name": "limit",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 10,
+  },
+}
+`;
+
+exports[`parse ast-corpus $inputs.name == 'it''s ok' 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$inputs.name",
+    "expression": {
+      "type": "InputsExpression",
+      "name": "name",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "string",
+    "value": "it's ok",
+  },
+}
+`;
+
+exports[`parse ast-corpus $method == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$method",
+    "expression": {
+      "type": "MethodExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $outputs.token != null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "!=",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$outputs.token",
+    "expression": {
+      "type": "OutputsExpression",
+      "name": "token",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $request.body#/id == 1 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$request.body#/id",
+    "expression": {
+      "type": "RequestExpression",
+      "source": {
+        "type": "Source",
+        "reference": {
+          "type": "BodyReference",
+          "jsonPointer": {
+            "type": "JsonPointer",
+            "value": "/id",
+            "referenceTokens": [
+              {
+                "type": "ReferenceToken",
+                "value": "id",
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 1,
+  },
+}
+`;
+
+exports[`parse ast-corpus $request.header.content-type == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$request.header.content-type",
+    "expression": {
+      "type": "RequestExpression",
+      "source": {
+        "type": "Source",
+        "reference": {
+          "type": "HeaderReference",
+          "token": "content-type",
+        },
+      },
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $request.path.id == 5 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$request.path.id",
+    "expression": {
+      "type": "RequestExpression",
+      "source": {
+        "type": "Source",
+        "reference": {
+          "type": "PathReference",
+          "name": "id",
+        },
+      },
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 5,
+  },
+}
+`;
+
+exports[`parse ast-corpus $request.query.limit == 10 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$request.query.limit",
+    "expression": {
+      "type": "RequestExpression",
+      "source": {
+        "type": "Source",
+        "reference": {
+          "type": "QueryReference",
+          "name": "limit",
+        },
+      },
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 10,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.active 1`] = `
+{
+  "type": "RuntimeExpressionNavigation",
+  "expression": {
+    "type": "RuntimeExpression",
+    "text": "$response.body",
+    "expression": {
+      "type": "ResponseExpression",
+      "source": {
+        "type": "Source",
+        "reference": {
+          "type": "BodyReference",
+        },
+      },
+    },
+  },
+  "navigation": [
+    {
+      "type": "MemberAccess",
+      "name": "active",
+    },
+  ],
+}
+`;
+
+exports[`parse ast-corpus $response.body.amount == -3.14 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "amount",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": -3.14,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.amount == 1.5e3 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "amount",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 1500,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.count == 0 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "count",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 0,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.data != null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "!=",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "data",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.data[0].id > 10 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": ">",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "data",
+      },
+      {
+        "type": "IndexAccess",
+        "value": 0,
+      },
+      {
+        "type": "MemberAccess",
+        "name": "id",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 10,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.items[2] == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "items",
+      },
+      {
+        "type": "IndexAccess",
+        "value": 2,
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $response.body.status == 'available' 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpressionNavigation",
+    "expression": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "navigation": [
+      {
+        "type": "MemberAccess",
+        "name": "status",
+      },
+    ],
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "string",
+    "value": "available",
+  },
+}
+`;
+
+exports[`parse ast-corpus $self == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$self",
+    "expression": {
+      "type": "SelfExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $sourceDescriptions.pet.getPet == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$sourceDescriptions.pet.getPet",
+    "expression": {
+      "type": "SourceDescriptionsExpression",
+      "sourceName": "pet",
+      "reference": "getPet",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode != 200 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "!=",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 200,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode < 600 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "<",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 600,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode <= 599 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "<=",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 599,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode == 200 && $response.body.data != null 1`] = `
+{
+  "type": "LogicalExpression",
+  "operator": "&&",
+  "left": {
+    "type": "BinaryExpression",
+    "operator": "==",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 200,
+    },
+  },
+  "right": {
+    "type": "BinaryExpression",
+    "operator": "!=",
+    "left": {
+      "type": "RuntimeExpressionNavigation",
+      "expression": {
+        "type": "RuntimeExpression",
+        "text": "$response.body",
+        "expression": {
+          "type": "ResponseExpression",
+          "source": {
+            "type": "Source",
+            "reference": {
+              "type": "BodyReference",
+            },
+          },
+        },
+      },
+      "navigation": [
+        {
+          "type": "MemberAccess",
+          "name": "data",
+        },
+      ],
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "null",
+      "value": null,
+    },
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode == 200 || $statusCode == 201 1`] = `
+{
+  "type": "LogicalExpression",
+  "operator": "||",
+  "left": {
+    "type": "BinaryExpression",
+    "operator": "==",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 200,
+    },
+  },
+  "right": {
+    "type": "BinaryExpression",
+    "operator": "==",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 201,
+    },
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode == 200 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 200,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode > 199 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": ">",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 199,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode >= 200 && $statusCode < 300 1`] = `
+{
+  "type": "LogicalExpression",
+  "operator": "&&",
+  "left": {
+    "type": "BinaryExpression",
+    "operator": ">=",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 200,
+    },
+  },
+  "right": {
+    "type": "BinaryExpression",
+    "operator": "<",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$statusCode",
+      "expression": {
+        "type": "StatusCodeExpression",
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "number",
+      "value": 300,
+    },
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode >= 200 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": ">=",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$statusCode",
+    "expression": {
+      "type": "StatusCodeExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "number",
+    "value": 200,
+  },
+}
+`;
+
+exports[`parse ast-corpus $statusCode 1`] = `
+{
+  "type": "RuntimeExpression",
+  "text": "$statusCode",
+  "expression": {
+    "type": "StatusCodeExpression",
+  },
+}
+`;
+
+exports[`parse ast-corpus $steps.foo.outputs.flag 1`] = `
+{
+  "type": "RuntimeExpression",
+  "text": "$steps.foo.outputs.flag",
+  "expression": {
+    "type": "StepsExpression",
+    "stepId": "foo",
+    "field": "outputs",
+    "outputName": "flag",
+  },
+}
+`;
+
+exports[`parse ast-corpus $url == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$url",
+    "expression": {
+      "type": "UrlExpression",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus $workflows.foo.outputs.bar == null 1`] = `
+{
+  "type": "BinaryExpression",
+  "operator": "==",
+  "left": {
+    "type": "RuntimeExpression",
+    "text": "$workflows.foo.outputs.bar",
+    "expression": {
+      "type": "WorkflowsExpression",
+      "workflowId": "foo",
+      "field": "outputs",
+      "fieldName": "bar",
+    },
+  },
+  "right": {
+    "type": "Literal",
+    "valueType": "null",
+    "value": null,
+  },
+}
+`;
+
+exports[`parse ast-corpus 'available' 1`] = `
+{
+  "type": "Literal",
+  "valueType": "string",
+  "value": "available",
+}
+`;
+
+exports[`parse ast-corpus ($statusCode == 200 || $statusCode == 201) && $response.body != null 1`] = `
+{
+  "type": "LogicalExpression",
+  "operator": "&&",
+  "left": {
+    "type": "LogicalExpression",
+    "operator": "||",
+    "left": {
+      "type": "BinaryExpression",
+      "operator": "==",
+      "left": {
+        "type": "RuntimeExpression",
+        "text": "$statusCode",
+        "expression": {
+          "type": "StatusCodeExpression",
+        },
+      },
+      "right": {
+        "type": "Literal",
+        "valueType": "number",
+        "value": 200,
+      },
+    },
+    "right": {
+      "type": "BinaryExpression",
+      "operator": "==",
+      "left": {
+        "type": "RuntimeExpression",
+        "text": "$statusCode",
+        "expression": {
+          "type": "StatusCodeExpression",
+        },
+      },
+      "right": {
+        "type": "Literal",
+        "valueType": "number",
+        "value": 201,
+      },
+    },
+  },
+  "right": {
+    "type": "BinaryExpression",
+    "operator": "!=",
+    "left": {
+      "type": "RuntimeExpression",
+      "text": "$response.body",
+      "expression": {
+        "type": "ResponseExpression",
+        "source": {
+          "type": "Source",
+          "reference": {
+            "type": "BodyReference",
+          },
+        },
+      },
+    },
+    "right": {
+      "type": "Literal",
+      "valueType": "null",
+      "value": null,
+    },
+  },
+}
+`;
+
+exports[`parse ast-corpus 42 1`] = `
+{
+  "type": "Literal",
+  "valueType": "number",
+  "value": 42,
+}
+`;
+
+exports[`parse ast-corpus false 1`] = `
+{
+  "type": "Literal",
+  "valueType": "boolean",
+  "value": false,
+}
+`;
+
+exports[`parse ast-corpus null 1`] = `
+{
+  "type": "Literal",
+  "valueType": "null",
+  "value": null,
+}
+`;
+
+exports[`parse ast-corpus true 1`] = `
+{
+  "type": "Literal",
+  "valueType": "boolean",
+  "value": true,
+}
+`;

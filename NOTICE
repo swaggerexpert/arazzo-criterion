@@ -1,0 +1,20 @@
+@swaggerexpert/arazzo-criterion
+Copyright 2025, Vladimír Gorej
+@swaggerexpert/arazzo-criterion is licensed under Apache 2.0 license.
+Copy of the Apache 2.0 license can be found in `LICENSE` file.
+
+JSONPath: Query Expressions for JSON
+Copyright (c) 2024 IETF Trust and the persons identified as the document authors. All rights reserved.
+https://www.rfc-editor.org/rfc/rfc9535
+The logical / comparison spine of the ABNF grammar (grammar.bnf) - the
+logical-or-expr, logical-and-expr, basic-expr, paren-expr, test-expr,
+comparison-expr, logical-not-op, comparison-op, number, frac, exp, S and B
+rules - is derived from RFC 9535 section 2.3.5.1 and is licensed under the
+Revised BSD License - https://spdx.org/licenses/BSD-3-Clause.html.
+
+Arazzo Specification 1.1.0
+Copyright The Linux Foundation
+Fragments of the specification text are embedded in `README.md`.
+The runtime expression rules of the ABNF grammar (grammar.bnf) are inlined from
+the Arazzo Specification (by way of @swaggerexpert/arazzo-runtime-expression).
+Copy of the Apache 2.0 license can be found in `LICENSE` file.

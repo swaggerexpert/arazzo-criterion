@@ -1,0 +1,110 @@
+; Arazzo Criterion Object - "simple" condition ABNF syntax
+; https://spec.openapis.org/arazzo/v1.1.0.html#criterion-object
+;
+; This grammar is self-contained and uses only standard ABNF (RFC 5234) - no
+; parser-specific extensions. It describes the criterion language and does NOT
+; embed the Arazzo Runtime Expressions grammar: an operand is captured as a single
+; bounded token, and the fact that this token is a runtime expression is resolved
+; separately by @swaggerexpert/arazzo-runtime-expression during AST construction.
+;
+; The logical / comparison spine (logical-or-expr, logical-and-expr, basic-expr,
+; paren-expr, test-expr, comparison-expr, logical-not-op, comparison-op, number,
+; frac, exp, S, B) is derived from RFC 9535 (JSONPath) section 2.3.5.1. It cleanly
+; separates a logical layer (||, &&, !, grouping) that composes only booleans from a
+; flat, non-recursive comparison layer (comparable OP comparable), which rejects
+; nonsense such as chained comparisons (a < b < c) at the grammar level.
+;
+; SPDX-FileCopyrightText: Copyright (c) 2024 IETF Trust and the persons identified
+;   as the document authors. All rights reserved. https://www.rfc-editor.org/rfc/rfc9535
+; SPDX-License-Identifier: BSD-3-Clause (for the RFC 9535-derived rules above)
+;
+; About the operand: a runtime expression and the criterion accessors (".member",
+; "[n]") both use "." as a separator, so the boundary between them cannot be
+; expressed in a context-free grammar. The operand is therefore matched here as one
+; maximal token - a run of characters that excludes whitespace and the criterion-
+; significant characters
+;   "!" %x21  "&" %x26  "(" %x28  ")" %x29  "<" %x3C  "=" %x3D  ">" %x3E
+;   "{" %x7B  "|" %x7C  "}" %x7D
+; The AST builder then splits it into the runtime-expression base and the trailing
+; accessors by delegating the base to @swaggerexpert/arazzo-runtime-expression.
+;
+; The equivalent normative structure, as it would appear in a specification that
+; references the Runtime Expressions grammar by name, is:
+;
+;   comparable                 = literal / runtime-expression-operand
+;   runtime-expression-operand = runtime-expression *( "." member-name / "[" index "]" )
+;                                ; runtime-expression is defined in the Runtime Expressions section
+
+; ---------------------------------------------------------------------------
+; Criterion condition (simple type)
+; ---------------------------------------------------------------------------
+
+condition        = S logical-expr S
+
+logical-expr     = logical-or-expr
+logical-or-expr  = logical-and-expr *( S "||" S logical-and-expr )
+logical-and-expr = basic-expr *( S "&&" S basic-expr )
+
+basic-expr       = paren-expr / comparison-expr / test-expr
+paren-expr       = [ logical-not-op S ] "(" S logical-expr S ")"
+test-expr        = [ logical-not-op S ] comparable
+comparison-expr  = comparable S comparison-op S comparable
+
+logical-not-op   = "!"
+comparison-op    = "==" / "!=" / "<=" / ">=" / "<" / ">"
+
+; ---------------------------------------------------------------------------
+; Comparables: literals or operands (runtime expression + navigation, matched as
+; one bounded token; see the header note)
+; ---------------------------------------------------------------------------
+
+comparable                 = literal / runtime-expression-operand
+runtime-expression-operand = "$" 1*operand-char
+operand-char               = %x22-25 / %x27 / %x2A-3B / %x3F-5A / %x5B-5D / %x5E-7A / %x7E / %x80-10FFFF
+
+; Navigation over the resolved runtime-expression value. This is NOT referenced
+; from `condition` - the operand is matched as a single token there (see the header
+; note). It is a secondary entry point: after the runtime-expression base is split
+; off an operand token, the remainder is parsed against `runtime-expression-navigation`
+; so that the ".member" / "[index]" accessors are validated and structured by this
+; grammar rather than by ad-hoc code.
+runtime-expression-navigation = 1*( member-access / index-access )
+member-access                 = "." member-name
+index-access                  = "[" index "]"
+member-name                   = 1*( ALPHA / DIGIT / "_" / "-" )
+index                         = 1*DIGIT
+
+; ---------------------------------------------------------------------------
+; Literals
+; ---------------------------------------------------------------------------
+
+literal          = number / string / boolean / null
+boolean          = "true" / "false"
+null             = "null"
+
+; number - decimal, mirrors RFC 9535
+number           = ( int / "-0" ) [ frac ] [ exp ]
+int              = "0" / ( [ "-" ] DIGIT1 *DIGIT )
+frac             = "." 1*DIGIT
+exp              = ( "e" / "E" ) [ "-" / "+" ] 1*DIGIT
+DIGIT1           = %x31-39   ; 1-9 non-zero digit
+
+; string - single-quoted; a literal quote is escaped by doubling it ('')
+string           = squote *( escaped-quote / string-char ) squote
+escaped-quote    = squote squote                 ; '' represents a single '
+string-char      = %x20-26 / %x28-10FFFF         ; any char except squote (%x27)
+squote           = %x27                           ; '
+
+; ---------------------------------------------------------------------------
+; Whitespace (optional blank space), per RFC 9535
+; ---------------------------------------------------------------------------
+
+S                = *B
+B                = %x20 / %x09 / %x0A / %x0D      ; space, tab, LF, CR
+
+; ---------------------------------------------------------------------------
+; Core rules (RFC 5234 B.1)
+; ---------------------------------------------------------------------------
+
+ALPHA          = %x41-5A / %x61-7A   ; A-Z / a-z
+DIGIT          = %x30-39             ; 0-9
