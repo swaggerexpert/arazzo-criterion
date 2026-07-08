@@ -1,14 +1,39 @@
 # @swaggerexpert/arazzo-criterion
 
-[Arazzo Criterion Objects](https://spec.openapis.org/arazzo/v1.1.0.html#criterion-object) specify the conditions used in `successCriteria` of a [Step Object](https://spec.openapis.org/arazzo/v1.1.0.html#step-object)
-and in the `criteria` of Success / Failure Action Objects.
+[![npmversion](https://img.shields.io/npm/v/%40swaggerexpert%2Farazzo-criterion?style=flat-square&label=npm%20package&color=%234DC81F&link=https%3A%2F%2Fwww.npmjs.com%2Fpackage%2F%40swaggerexpert%2Farazzo-criterion)](https://www.npmjs.com/package/@swaggerexpert/arazzo-criterion)
+[![npm](https://img.shields.io/npm/dm/@swaggerexpert/arazzo-criterion)](https://www.npmjs.com/package/@swaggerexpert/arazzo-criterion)
+[![Test workflow](https://github.com/swaggerexpert/arazzo-criterion/actions/workflows/test.yml/badge.svg)](https://github.com/swaggerexpert/arazzo-criterion/actions)
+[![Dependabot enabled](https://img.shields.io/badge/Dependabot-enabled-blue.svg)](https://dependabot.com/)
+[![try on RunKit](https://img.shields.io/badge/try%20on-RunKit-brightgreen.svg?style=flat)](https://npm.runkit.com/@swaggerexpert/arazzo-criterion)
+[![Tidelift](https://tidelift.com/badges/package/npm/@swaggerexpert%2Farazzo-criterion)](https://tidelift.com/subscription/pkg/npm-.swaggerexpert-arazzo-criterion?utm_source=npm-swaggerexpert-arazzo-criterion&utm_medium=referral&utm_campaign=readme)
 
-`@swaggerexpert/arazzo-criterion` is a **parser**, **validator** and **evaluator** for the **`simple`** type of Arazzo Criterion conditions.
+[Arazzo Criterion Objects](https://spec.openapis.org/arazzo/v1.1.0.html#criterion-object) specify the conditions used in `successCriteria` of a [Step Object](https://spec.openapis.org/arazzo/v1.1.0.html#step-object)
+and in the `criteria` of Success and Failure Action Objects.
+
+`@swaggerexpert/arazzo-criterion` is a **parser**, **validator** and **evaluator** for the **`simple`** type of Arazzo Criterion conditions **only**.
+The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** — they delegate to external engines (a regular-expression engine, [@swaggerexpert/jsonpath](https://github.com/swaggerexpert/jsonpath), an XPath engine) and belong in a higher-level evaluator that composes this package with those.
 
 The `simple` condition syntax combines literals, comparison and logical operators, property de-reference / index accessors, and [Arazzo Runtime Expressions](https://spec.openapis.org/arazzo/v1.1.0.html#runtime-expressions).
 Runtime Expression operands are parsed by delegating to [@swaggerexpert/arazzo-runtime-expression](https://github.com/swaggerexpert/arazzo-runtime-expression), so their sub-ASTs match that package exactly.
 
-> The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** for this package.
+It supports the `simple` Criterion Object condition defined in the following Arazzo specification versions:
+
+- [Arazzo 1.0.0](https://spec.openapis.org/arazzo/v1.0.0.html)
+- [Arazzo 1.0.1](https://spec.openapis.org/arazzo/v1.0.1.html)
+- [Arazzo 1.1.0](https://spec.openapis.org/arazzo/v1.1.0.html)
+
+<table>
+  <tr>
+    <td align="right" valign="middle">
+        <img src="https://raw.githubusercontent.com/swaggerexpert/arazzo-criterion/main/assets/tidelift.webp" alt="Tidelift" width="60" />
+      </td>
+      <td valign="middle">
+        <a href="https://tidelift.com/subscription/pkg/npm-.swaggerexpert-arazzo-criterion?utm_source=npm-swaggerexpert-arazzo-criterion&utm_medium=referral&utm_campaign=readme">
+            Get professionally supported @swaggerexpert/arazzo-criterion with Tidelift Subscription.
+        </a>
+      </td>
+  </tr>
+</table>
 
 ## Table of Contents
 
