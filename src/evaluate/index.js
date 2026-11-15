@@ -59,8 +59,7 @@ const prepare = (condition, resolve, name) => {
   try {
     parsed = parse(condition);
   } catch (error) {
-    // parse throws (rather than failing) for an operand that matches the grammar but is not
-    // a valid runtime expression, e.g. `$x == 1`; that is still an invalid condition
+    // parse throws only on an unexpected error; report it with its cause
     throw new ArazzoCriterionEvaluateError('Invalid criterion condition', {
       condition,
       cause: error,

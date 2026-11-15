@@ -65,7 +65,9 @@ is not absorbed. The split into base + navigation is resolved at AST-build time,
 This makes validity **two-phase**: the grammar accepts a superset (any `$`-token in operand position),
 and the RE reparse rejects tokens that are not valid runtime expressions (e.g. `$nonsense`). A parser
 built from `grammar.bnf` alone is therefore necessary but not sufficient - operands must additionally
-be validated against the Runtime Expressions grammar. `parse()` and `test()` do both phases.
+be validated against the Runtime Expressions grammar. `parse()` does both phases for every translator
+(an internal pass collects the operand tokens), so an invalid operand gives `result.success === false`;
+`test()` and `evaluate()` build on it.
 
 Because the RE parser decides where the expression ends, reference families whose identifiers include
 dots (`$inputs`, `$outputs`, `$workflows.*`, `$components.*`) consume their dots (no `.`-navigation into

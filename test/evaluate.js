@@ -1,12 +1,7 @@
 import { promisify } from 'node:util';
 import { assert } from 'chai';
 
-import {
-  evaluate,
-  evaluateAsync,
-  ArazzoCriterionEvaluateError,
-  ArazzoCriterionParseError,
-} from '../src/index.js';
+import { evaluate, evaluateAsync, ArazzoCriterionEvaluateError } from '../src/index.js';
 
 /**
  * A resolver backed by a plain map keyed on the runtime expression string.
@@ -256,7 +251,6 @@ describe('evaluate', function () {
       assert.instanceOf(error, ArazzoCriterionEvaluateError);
       assert.strictEqual(error.message, 'Invalid criterion condition');
       assert.strictEqual(error.condition, '$nonsense == 1');
-      assert.instanceOf(error.cause, ArazzoCriterionParseError);
     });
 
     specify('should throw when resolve returns a Promise', function () {
