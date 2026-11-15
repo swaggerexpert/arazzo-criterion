@@ -257,6 +257,7 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - string comparisons are **case-insensitive**;
 - numeric strings are **coerced** to numbers when compared with a number;
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
+- arrays and objects are never equal: `==` is `false` and `!=` is `true` whenever either side is an array or object (even the same value); compare structured values with a `jsonpath` criterion instead;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
 `evaluate` is synchronous: `resolve` must return the value itself. If it returns a native Promise (for example, `resolve` is an `async` function), `evaluate` throws a `TypeError` instead of comparing the Promise object.

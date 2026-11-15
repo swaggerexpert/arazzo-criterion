@@ -35,6 +35,35 @@ describe('evaluate', function () {
       assert.isTrue(evaluate('$inputs.age == 30', { resolve }));
     });
 
+    specify('should treat arrays and objects as never equal', function () {
+      const shared = [1, 2];
+      const values = {
+        '$response.body#/a': [1, 2],
+        '$response.body#/b': [1, 2],
+        '$response.body#/s1': shared,
+        '$response.body#/s2': shared,
+        '$response.body#/o': { a: 1 },
+      };
+      const resolveValues = resolverFrom(values);
+
+      assert.isFalse(
+        evaluate('$response.body#/a == $response.body#/b', { resolve: resolveValues }),
+      );
+      assert.isFalse(
+        evaluate('$response.body#/a == $response.body#/a', { resolve: resolveValues }),
+      );
+      assert.isFalse(
+        evaluate('$response.body#/s1 == $response.body#/s2', { resolve: resolveValues }),
+      );
+      assert.isFalse(
+        evaluate('$response.body#/o == $response.body#/o', { resolve: resolveValues }),
+      );
+      assert.isFalse(evaluate("$response.body#/a == '1,2'", { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/a != $response.body#/a', { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/o != null', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/o == null', { resolve: resolveValues }));
+    });
+
     specify('should treat null as equal only to null', function () {
       assert.isTrue(evaluate('$response.body.missing == null', { resolve }));
       assert.isFalse(evaluate('$statusCode == null', { resolve }));
