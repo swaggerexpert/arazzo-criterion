@@ -240,6 +240,7 @@ import { test } from '@swaggerexpert/arazzo-criterion';
 
 test('$statusCode == 200'); // => true
 test('$statusCode < 200 < 300'); // => false (chained comparisons are invalid)
+test('$x == 1'); // => false ($x is not a runtime expression)
 ```
 
 #### Evaluation

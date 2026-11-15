@@ -34,20 +34,38 @@ const OPERAND_TYPES = new Set([
  * @swaggerexpert/arazzo-runtime-expression.
  */
 const splitAtRuntimeExpression = (operand) => {
-  const full = parseRuntimeExpression(operand);
-  if (full.result.success) {
+  // only validity is needed here, so the runtime expression parses build no tree
+  const isRuntimeExpression = (text) => parseRuntimeExpression(text, { translator: null }).result;
+
+  const full = isRuntimeExpression(operand);
+  if (full.success) {
     return { expressionText: operand, navigationText: '' };
   }
 
   // A failing parse reports how far it matched; walk down from there to the
   // longest prefix that parses cleanly (robust against stopping mid-rule).
-  for (let n = full.result.maxMatched; n > 0; n -= 1) {
-    if (parseRuntimeExpression(operand.slice(0, n)).result.success) {
+  for (let n = full.maxMatched; n > 0; n -= 1) {
+    if (isRuntimeExpression(operand.slice(0, n)).success) {
       return { expressionText: operand.slice(0, n), navigationText: operand.slice(n) };
     }
   }
 
-  throw new Error(`Operand is not a valid runtime expression: "${operand}"`);
+  return undefined;
+};
+
+/**
+ * Whether an operand token is a runtime expression followed by valid criterion accessors.
+ * Builds no trees; used by the parser to reject an invalid operand while parsing.
+ */
+export const isValidOperand = (operand) => {
+  const split = splitAtRuntimeExpression(operand);
+  if (!split) return false;
+  if (split.navigationText === '') return true;
+
+  return parse(split.navigationText, {
+    startRule: 'runtime-expression-navigation',
+    translator: null,
+  }).result.success;
 };
 
 /**
@@ -71,7 +89,9 @@ const parseNavigation = (navigationText) => {
  * both already parsed. `navigation` is an empty array when there are no accessors.
  */
 export const parseOperand = (operand) => {
-  const { expressionText, navigationText } = splitAtRuntimeExpression(operand);
+  const split = splitAtRuntimeExpression(operand);
+  if (!split) throw new Error(`Operand is not a valid runtime expression: "${operand}"`);
+  const { expressionText, navigationText } = split;
 
   const runtimeExpression = {
     type: 'RuntimeExpression',

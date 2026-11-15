@@ -1,13 +1,22 @@
 import { assert } from 'chai';
 
-import { parse, CSTTranslator } from '../src/index.js';
+import { Ast } from 'apg-lite';
+
+import { parse, CSTTranslator, XMLTranslator } from '../src/index.js';
 
 describe('parse', function () {
   context('given invalid condition string', function () {
     context('operand that is not a valid runtime expression', function () {
+      class CustomTranslator extends Ast {
+        getTree() {
+          return 'custom';
+        }
+      }
       const translators = [
         ['ASTTranslator (default)', () => ({})],
         ['CSTTranslator', () => ({ translator: new CSTTranslator() })],
+        ['XMLTranslator', () => ({ translator: new XMLTranslator() })],
+        ['a custom translator', () => ({ translator: new CustomTranslator() })],
         ['no translator', () => ({ translator: null })],
       ];
 
@@ -24,6 +33,30 @@ describe('parse', function () {
             assert.isFalse(result.success, condition);
             assert.isUndefined(tree, condition);
           });
+        });
+
+        specify(
+          `should fail at the invalid operand like any syntax error with ${name}`,
+          function () {
+            const { result } = parse('$statusCode == 200 && $x', options());
+
+            assert.isFalse(result.success);
+            assert.strictEqual(result.matched, 19); // the valid prefix
+            assert.strictEqual(result.maxMatched, 24); // the end of the invalid operand
+          },
+        );
+
+        specify(`should validate operands for other start rules with ${name}`, function () {
+          ['comparison-expr', 'test-expr', 'runtime-expression-operand'].forEach((startRule) => {
+            const condition = startRule === 'comparison-expr' ? '$x == 1' : '$x';
+            const { result, tree } = parse(condition, { ...options(), startRule });
+
+            assert.isFalse(result.success, startRule);
+            assert.isUndefined(tree, startRule);
+          });
+          assert.isTrue(
+            parse('$statusCode', { ...options(), startRule: 'test-expr' }).result.success,
+          );
         });
 
         specify(`should parse valid operands with ${name}`, function () {
