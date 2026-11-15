@@ -261,6 +261,23 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - arrays and objects are never equal: `==` is `false` and `!=` is `true` whenever either side is an array or object (even the same value); compare structured values with a `jsonpath` criterion instead;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
+Numeric coercion applies only when the other operand is a number. Two numeric strings are compared as (case-insensitive) text, so
+comparing two HTTP header values, or a header value with a quoted literal, orders them lexically:
+
+```js
+const context = { '$response.header.X-Remaining': '10', '$response.header.X-Limit': '9' };
+const resolve = (expression) => context[expression];
+
+evaluate('$response.header.X-Remaining > $response.header.X-Limit', { resolve }); // => false ('10' < '9' as text)
+evaluate("$response.header.X-Remaining > '9'", { resolve }); // => false
+evaluate('$response.header.X-Remaining > 9', { resolve }); // => true (compared with a number literal)
+```
+
+To get numeric ordering, compare against a number literal (or a value that resolves to a number). The specification's wording
+("numeric strings SHOULD be coerced to numbers when compared with numeric operators") allows both readings; this library follows
+the one that keeps string-to-string comparison case-insensitive, as the specification requires. The question is raised upstream in
+[OAI/Arazzo-Specification#584](https://github.com/OAI/Arazzo-Specification/issues/584).
+
 `evaluate` is synchronous: `resolve` must return the value itself. If it returns a native Promise (for example, `resolve` is an `async` function), `evaluate` throws a `TypeError` instead of comparing the Promise object.
 
 ##### Asynchronous evaluation
