@@ -1,9 +1,39 @@
 import { assert } from 'chai';
 
-import { parse } from '../src/index.js';
+import { parse, CSTTranslator } from '../src/index.js';
 
 describe('parse', function () {
   context('given invalid condition string', function () {
+    context('operand that is not a valid runtime expression', function () {
+      const translators = [
+        ['ASTTranslator (default)', () => ({})],
+        ['CSTTranslator', () => ({ translator: new CSTTranslator() })],
+        ['no translator', () => ({ translator: null })],
+      ];
+
+      translators.forEach(([name, options]) => {
+        specify(`should fail parsing with ${name}`, function () {
+          [
+            '$x == 1',
+            '$nonsense',
+            '$response.body.a. == 1',
+            '$statusCode == 200 && $nonsense',
+          ].forEach((condition) => {
+            const { result, tree } = parse(condition, options());
+
+            assert.isFalse(result.success, condition);
+            assert.isUndefined(tree, condition);
+          });
+        });
+
+        specify(`should parse valid operands with ${name}`, function () {
+          const { result } = parse('$response.body.data[0].id > 10 || $inputs.flag', options());
+
+          assert.isTrue(result.success);
+        });
+      });
+    });
+
     context('empty string', function () {
       specify('should fail parsing', function () {
         const { result, tree } = parse('');

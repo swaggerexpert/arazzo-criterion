@@ -70,7 +70,7 @@ const parseNavigation = (navigationText) => {
  * Parse an operand token into its runtime-expression base and criterion navigation,
  * both already parsed. `navigation` is an empty array when there are no accessors.
  */
-const parseOperand = (operand) => {
+export const parseOperand = (operand) => {
   const { expressionText, navigationText } = splitAtRuntimeExpression(operand);
 
   const runtimeExpression = {
