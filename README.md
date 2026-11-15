@@ -259,7 +259,7 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
-`evaluate` is synchronous: `resolve` must return the value itself. If it returns a Promise, `evaluate` throws a `TypeError` instead of comparing the Promise object.
+`evaluate` is synchronous: `resolve` must return the value itself. If it returns a native Promise (for example, `resolve` is an `async` function), `evaluate` throws a `TypeError` instead of comparing the Promise object.
 
 ##### Asynchronous evaluation
 
@@ -276,7 +276,8 @@ await evaluateAsync('$statusCode == 500 && $response.body.status', { resolve });
 
 - `&&` and `||` short-circuit: the right operand is resolved only after the left one has settled without deciding the result.
 - Every failure rejects the returned Promise, including invalid input, an invalid condition, and a `resolve` that throws or rejects. `evaluateAsync` never throws synchronously.
-- A resolved value is awaited when it is a *thenable* (an object or function with a `then` method), so a resolved value should not itself carry a `then` method.
+- Only what `resolve` returns is awaited, when it is a *thenable* (an object or function with a `then` method). Data reached by navigation (`$response.body.data[0].id`) is compared as is.
+- `util.promisify(evaluate)` returns `evaluateAsync`.
 
 #### Errors
 
@@ -293,7 +294,8 @@ import {
 
 **ArazzoCriterionError** is the base class for all errors. **ArazzoCriterionParseError** wraps an unexpected error
 raised during parsing, and **ArazzoCriterionEvaluateError** is thrown by `evaluate` (for example, when the condition
-is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`.
+is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`. `evaluateAsync` rejects with
+the same errors instead of throwing them.
 
 ```js
 import { evaluate, ArazzoCriterionEvaluateError } from '@swaggerexpert/arazzo-criterion';

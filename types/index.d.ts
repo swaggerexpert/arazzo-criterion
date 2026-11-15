@@ -232,10 +232,15 @@ export interface EvaluateOptions {
 /**
  * Evaluate a "simple" criterion condition against caller-supplied values.
  *
- * `resolve` must return the value itself; returning a Promise throws a
- * `TypeError` (use {@link evaluateAsync}).
+ * `resolve` must return the value itself; returning a native Promise (e.g. from
+ * an `async` function) throws a `TypeError` (use {@link evaluateAsync}).
+ * `util.promisify(evaluate)` returns {@link evaluateAsync}.
  */
 export function evaluate(condition: string, options: EvaluateOptions): boolean;
+export namespace evaluate {
+  /** Typing hook for `util.promisify(evaluate)`, which returns {@link evaluateAsync}. */
+  function __promisify__(condition: string, options: EvaluateAsyncOptions): Promise<boolean>;
+}
 
 /**
  * Async resolver: like {@link Resolver}, but may return a Promise of the value.
@@ -252,6 +257,8 @@ export interface EvaluateAsyncOptions {
 /**
  * Evaluate a "simple" criterion condition against values that may only be
  * available asynchronously. Always returns a Promise; every failure rejects it.
+ * Only values returned by `resolve` are awaited; data reached by navigation is
+ * compared as is.
  */
 export function evaluateAsync(condition: string, options: EvaluateAsyncOptions): Promise<boolean>;
 

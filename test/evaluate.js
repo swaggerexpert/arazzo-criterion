@@ -1,6 +1,7 @@
+import { promisify } from 'node:util';
 import { assert } from 'chai';
 
-import { evaluate, evaluateAsync } from '../src/index.js';
+import { evaluate, evaluateAsync, ArazzoCriterionEvaluateError } from '../src/index.js';
 
 /**
  * A resolver backed by a plain map keyed on the runtime expression string.
@@ -103,12 +104,53 @@ describe('evaluate', function () {
     });
 
     specify('should throw when resolve returns a Promise', function () {
-      assert.throws(
-        () => evaluate('$statusCode == 200', { resolve: async () => 200 }),
-        TypeError,
-        /evaluateAsync/,
-      );
+      const conditions = [
+        '$statusCode == 200',
+        '$statusCode',
+        '!$statusCode',
+        '$response.body.status',
+        '200 == $statusCode',
+        'true && $statusCode',
+        'false || $statusCode',
+      ];
+
+      for (const condition of conditions) {
+        assert.throws(
+          () => evaluate(condition, { resolve: async () => 200 }),
+          TypeError,
+          /evaluateAsync/,
+          condition,
+        );
+      }
     });
+
+    specify('should not resolve a short-circuited operand', function () {
+      assert.isFalse(evaluate('false && $statusCode', { resolve: async () => 200 }));
+      assert.isTrue(evaluate('true || $statusCode', { resolve: async () => 200 }));
+    });
+  });
+
+  context('given resolved values that are not Promises', function () {
+    specify('should compare them as is, whatever properties they carry', function () {
+      const values = {
+        '$response.body': { then: () => 1 },
+        '$request.body': {
+          get then() {
+            throw new Error('then must not be read');
+          },
+        },
+        $url: { nested: { then() {} } },
+      };
+      const resolveValue = (expression) => values[expression];
+
+      assert.isTrue(evaluate('$response.body != null', { resolve: resolveValue }));
+      assert.isTrue(evaluate('$request.body != null', { resolve: resolveValue }));
+      assert.isTrue(evaluate('$url.nested != null', { resolve: resolveValue }));
+    });
+  });
+
+  specify('should be promisified to evaluateAsync', function () {
+    assert.strictEqual(promisify(evaluate), evaluateAsync);
   });
 });
 
@@ -145,6 +187,9 @@ describe('evaluateAsync', function () {
       '!$response.body.active',
       '($statusCode == 200 || $statusCode == 201) && $response.body != null',
       '$response.body.missing > 0',
+      '$statusCode <= 200',
+      '$statusCode == 500 || $statusCode != 201',
+      '$statusCode == 500 || $inputs.name == 500',
       'null',
     ];
     const syncResolve = (expression) => ctx[expression];
@@ -181,6 +226,33 @@ describe('evaluateAsync', function () {
     assert.deepEqual(resolved, ['$statusCode', '$statusCode']);
   });
 
+  specify('should resolve the right operand when the left one does not decide', async function () {
+    const resolved = [];
+    const tracking = async (expression) => {
+      resolved.push(expression);
+      return ctx[expression];
+    };
+
+    assert.isTrue(await evaluateAsync('$statusCode == 500 || $inputs.name', { resolve: tracking }));
+    assert.isTrue(await evaluateAsync('$statusCode == 200 && $inputs.name', { resolve: tracking }));
+    assert.deepEqual(resolved, ['$statusCode', '$inputs.name', '$statusCode', '$inputs.name']);
+  });
+
+  specify('should not await data reached by navigation', async function () {
+    const never = { then() {} };
+    const values = { '$response.body': { nested: never } };
+
+    assert.isTrue(
+      await evaluateAsync('$response.body.nested != null', {
+        resolve: async (expression) => values[expression],
+      }),
+    );
+  });
+
+  specify('should be what util.promisify(evaluate) returns', async function () {
+    assert.isTrue(await promisify(evaluate)('$statusCode == 200', { resolve }));
+  });
+
   specify('should reject when resolve rejects', async function () {
     const failure = new Error('unavailable');
     const error = await rejection(
@@ -203,19 +275,43 @@ describe('evaluateAsync', function () {
     assert.strictEqual(error, failure);
   });
 
-  specify('should reject rather than throw on invalid input', async function () {
-    const invalid = [
-      () => evaluateAsync({ type: 'BinaryExpression' }, { resolve }),
-      () => evaluateAsync('$statusCode == 200'),
-      () => evaluateAsync('== 200', { resolve }),
+  specify('should reject when a later operand rejects or throws', async function () {
+    const failure = new Error('unavailable');
+    const failing = (expression) => {
+      if (expression === '$inputs.name') throw failure;
+      return Promise.resolve(ctx[expression]);
+    };
+    const conditions = [
+      '$statusCode == 200 && $inputs.name',
+      '$statusCode == 500 || $inputs.name',
+      '$statusCode == $inputs.name',
+      '!$inputs.name',
     ];
 
-    for (const call of invalid) {
+    for (const condition of conditions) {
+      assert.strictEqual(
+        await rejection(evaluateAsync(condition, { resolve: failing })),
+        failure,
+        condition,
+      );
+    }
+  });
+
+  specify('should reject rather than throw on invalid input', async function () {
+    const invalid = [
+      [() => evaluateAsync({ type: 'BinaryExpression' }, { resolve }), TypeError],
+      [() => evaluateAsync('$statusCode == 200'), TypeError, /evaluateAsync requires/],
+      [() => evaluateAsync('== 200', { resolve }), ArazzoCriterionEvaluateError],
+    ];
+
+    for (const [call, ErrorClass, message] of invalid) {
       let promise;
       assert.doesNotThrow(() => {
         promise = call();
       });
-      assert.instanceOf(await rejection(promise), Error);
+      const error = await rejection(promise);
+      assert.instanceOf(error, ErrorClass);
+      if (message) assert.match(error.message, message);
     }
   });
 });
