@@ -6,10 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install              # Install dependencies
-npm run build            # Full build: compile grammar + ES modules + CommonJS
+npm run build            # Full build: compile grammar + ES modules + CommonJS + bundled apg-lite + types/index.d.cts
 npm run grammar:compile  # Compile src/grammar.bnf to src/grammar.js
 npm run build:es         # Build ES modules only (to es/ directory)
 npm run build:cjs        # Build CommonJS modules only (to cjs/ directory)
+npm run build:types      # Copy types/index.d.ts to types/index.d.cts (also runs on npm pack)
 npm test                 # Run all tests with Mocha (writes new snapshots)
 npm run test:watch       # Run tests in watch mode
 ```
@@ -95,5 +96,7 @@ early so the trailing `.member` / `[index]` become criterion accessors (a `Runti
 
 ### Build Output
 
-Dual module formats: `es/` (ESM `.mjs`), `cjs/` (CommonJS `.cjs`), `types/` (TypeScript). Babel handles
+Dual module formats: `es/` (ESM `.mjs`), `cjs/` (CommonJS `.cjs`), `types/` (TypeScript). Typings live in
+`types/index.d.ts` (ESM); `npm run build:types` copies them to `types/index.d.cts` (generated, gitignored), which the
+`require` export condition points to, so CommonJS consumers with `node16`/`nodenext` resolution get types. Babel handles
 transformation; the module-resolver plugin rewrites the `apg-lite` import to the bundled `cjs/apg-lite.cjs`.

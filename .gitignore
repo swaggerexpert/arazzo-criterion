@@ -5,3 +5,4 @@ node_modules/
 /cjs
 /es
 /swaggerexpert-arazzo-criterion-*.tgz
+/types/index.d.cts

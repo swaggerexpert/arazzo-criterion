@@ -84,6 +84,9 @@ It supports the `simple` Criterion Object condition defined in the following Ara
  $ npm install @swaggerexpert/arazzo-criterion
 ```
 
+[TypeScript typings](https://github.com/swaggerexpert/arazzo-criterion/blob/main/types/index.d.ts) are included
+for both ES module and CommonJS consumers and require TypeScript 4.8 or later.
+
 ### Usage
 
 #### Parsing
