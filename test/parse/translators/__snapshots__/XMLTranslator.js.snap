@@ -3,21 +3,26 @@
 exports[`parse translators XMLTranslator should translate $response.body.data[0].id > 10 to XML 1`] = `
 "<?xml version="1.0" encoding="utf-8"?>
 <root nodes="7" characters="30">
+<!--
+  Caveat: AST node phrases may not be faithfully represented.
+          Invalid XML characters are replaced with 0xFFFD.
+          Special characters &<>"' are escaped with XML entities.
+-->
 <!-- input string -->
-  $response.body.data[0].id > 10
+  $response.body.data[0].id &gt; 10
  <node name="condition" index="0" length="30">
-   $response.body.data[0].id > 10
+   $response.body.data[0].id &gt; 10
   <node name="logical-or-expr" index="0" length="30">
-    $response.body.data[0].id > 10
+    $response.body.data[0].id &gt; 10
    <node name="logical-and-expr" index="0" length="30">
-     $response.body.data[0].id > 10
+     $response.body.data[0].id &gt; 10
     <node name="comparison-expr" index="0" length="30">
-      $response.body.data[0].id > 10
+      $response.body.data[0].id &gt; 10
      <node name="runtime-expression-operand" index="0" length="25">
        $response.body.data[0].id
      </node><!-- name="runtime-expression-operand" -->
      <node name="comparison-op" index="26" length="1">
-       >
+       &gt;
      </node><!-- name="comparison-op" -->
      <node name="number" index="28" length="2">
        10
@@ -33,6 +38,11 @@ exports[`parse translators XMLTranslator should translate $response.body.data[0]
 exports[`parse translators XMLTranslator should translate $statusCode == 200 to XML 1`] = `
 "<?xml version="1.0" encoding="utf-8"?>
 <root nodes="7" characters="18">
+<!--
+  Caveat: AST node phrases may not be faithfully represented.
+          Invalid XML characters are replaced with 0xFFFD.
+          Special characters &<>"' are escaped with XML entities.
+-->
 <!-- input string -->
   $statusCode == 200
  <node name="condition" index="0" length="18">
