@@ -1,7 +1,12 @@
 import { promisify } from 'node:util';
 import { assert } from 'chai';
 
-import { evaluate, evaluateAsync, ArazzoCriterionEvaluateError } from '../src/index.js';
+import {
+  evaluate,
+  evaluateAsync,
+  ArazzoCriterionEvaluateError,
+  ArazzoCriterionParseError,
+} from '../src/index.js';
 
 /**
  * A resolver backed by a plain map keyed on the runtime expression string.
@@ -237,7 +242,21 @@ describe('evaluate', function () {
     });
 
     specify('should throw for an unparseable condition string', function () {
-      assert.throws(() => evaluate('== 200', { resolve }));
+      assert.throws(() => evaluate('== 200', { resolve }), ArazzoCriterionEvaluateError);
+    });
+
+    specify('should throw for an operand that is not a valid runtime expression', function () {
+      let error;
+      try {
+        evaluate('$nonsense == 1', { resolve });
+      } catch (e) {
+        error = e;
+      }
+
+      assert.instanceOf(error, ArazzoCriterionEvaluateError);
+      assert.strictEqual(error.message, 'Invalid criterion condition');
+      assert.strictEqual(error.condition, '$nonsense == 1');
+      assert.instanceOf(error.cause, ArazzoCriterionParseError);
     });
 
     specify('should throw when resolve returns a Promise', function () {
@@ -453,6 +472,7 @@ describe('evaluateAsync', function () {
       [() => evaluateAsync({ type: 'BinaryExpression' }, { resolve }), TypeError],
       [() => evaluateAsync('$statusCode == 200'), TypeError, /evaluateAsync requires/],
       [() => evaluateAsync('== 200', { resolve }), ArazzoCriterionEvaluateError],
+      [() => evaluateAsync('$nonsense == 1', { resolve }), ArazzoCriterionEvaluateError],
     ];
 
     for (const [call, ErrorClass, message] of invalid) {
