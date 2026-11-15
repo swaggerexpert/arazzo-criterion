@@ -231,8 +231,29 @@ export interface EvaluateOptions {
 
 /**
  * Evaluate a "simple" criterion condition against caller-supplied values.
+ *
+ * `resolve` must return the value itself; returning a Promise throws a
+ * `TypeError` (use {@link evaluateAsync}).
  */
 export function evaluate(condition: string, options: EvaluateOptions): boolean;
+
+/**
+ * Async resolver: like {@link Resolver}, but may return a Promise of the value.
+ */
+export type AsyncResolver = (
+  expression: string,
+  ast: RuntimeExpressionAST,
+) => unknown | PromiseLike<unknown>;
+
+export interface EvaluateAsyncOptions {
+  readonly resolve: AsyncResolver;
+}
+
+/**
+ * Evaluate a "simple" criterion condition against values that may only be
+ * available asynchronously. Always returns a Promise; every failure rejects it.
+ */
+export function evaluateAsync(condition: string, options: EvaluateAsyncOptions): Promise<boolean>;
 
 /**
  * Grammar - ABNF grammar for "simple" criterion conditions

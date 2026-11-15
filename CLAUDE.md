@@ -77,6 +77,10 @@ early so the trailing `.member` / `[index]` become criterion accessors (a `Runti
   ASTTranslator (default), CSTTranslator, or null (validation only). Also `options.trace`, `options.stats`.
 - `test(condition)` - Validate a condition, returns boolean.
 - `evaluate(conditionOrAST, { resolve })` - Evaluate against caller-supplied values, returns boolean.
+  Throws a `TypeError` if `resolve` returns a Promise.
+- `evaluateAsync(condition, { resolve })` - Same semantics, `resolve` may return a Promise; returns
+  `Promise<boolean>` and reports every failure as a rejection. Both share one evaluator in
+  `src/evaluate/index.js` that threads each operand through a sync or async `step`.
 - `Grammar`, `CSTTranslator`, `ASTTranslator`, `Trace`.
 - `ArazzoCriterionError`, `ArazzoCriterionParseError`, `ArazzoCriterionEvaluateError`.
 
