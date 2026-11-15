@@ -190,6 +190,9 @@ describe('evaluateAsync', function () {
       '$statusCode <= 200',
       '$statusCode == 500 || $statusCode != 201',
       '$statusCode == 500 || $inputs.name == 500',
+      '200 == $statusCode',
+      '$statusCode == $inputs.name',
+      '!($statusCode == 200 && $inputs.name)',
       'null',
     ];
     const syncResolve = (expression) => ctx[expression];
@@ -236,6 +239,28 @@ describe('evaluateAsync', function () {
     assert.isTrue(await evaluateAsync('$statusCode == 500 || $inputs.name', { resolve: tracking }));
     assert.isTrue(await evaluateAsync('$statusCode == 200 && $inputs.name', { resolve: tracking }));
     assert.deepEqual(resolved, ['$statusCode', '$inputs.name', '$statusCode', '$inputs.name']);
+  });
+
+  specify('should resolve comparison operands left to right', async function () {
+    const resolved = [];
+    const tracking = async (expression) => {
+      resolved.push(expression);
+      return ctx[expression];
+    };
+
+    await evaluateAsync('$inputs.name == $statusCode', { resolve: tracking });
+    assert.deepEqual(resolved, ['$inputs.name', '$statusCode']);
+  });
+
+  specify('should await any thenable returned by resolve', async function () {
+    const thenable = (value) => ({ then: (onFulfilled) => onFulfilled(value) });
+
+    assert.isTrue(await evaluateAsync('$statusCode == 200', { resolve: () => thenable(200) }));
+    assert.isTrue(
+      await evaluateAsync("$response.body.status == 'available'", {
+        resolve: (expression) => thenable(ctx[expression]),
+      }),
+    );
   });
 
   specify('should not await data reached by navigation', async function () {
