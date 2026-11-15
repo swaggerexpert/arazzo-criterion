@@ -223,7 +223,10 @@ const relational = (operator, a, b) => {
   }
 };
 
-const isNumeric = (str) => str.trim() !== '' && Number.isFinite(Number(str));
+// a numeric string is one matching the grammar's own `number` rule (the JSON number
+// format): no hex/binary/octal prefixes, leading zeros, '+' sign or surrounding whitespace
+const NUMERIC = /^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$/;
+const isNumeric = (str) => NUMERIC.test(str) && Number.isFinite(Number(str));
 
 // A condition passes (truthy) when it evaluates to a truthy value; it fails (falsy)
 // on false, null, or a missing (undefined) value.
