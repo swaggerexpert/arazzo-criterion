@@ -183,8 +183,11 @@ const looseEquals = (a, b) => {
   }
 
   // numeric strings SHOULD be coerced to numbers when compared with a number
-  if (typeof a === 'number' && typeof b === 'string' && isNumeric(b)) return a === Number(b);
-  if (typeof b === 'number' && typeof a === 'string' && isNumeric(a)) return Number(a) === b;
+  if (isNumber(a) && typeof b === 'string' && isNumeric(b)) return a == Number(b);
+  if (isNumber(b) && typeof a === 'string' && isNumeric(a)) return Number(a) == b;
+
+  // a number and a BigInt are equal when they have the same mathematical value
+  if (isNumber(a) && isNumber(b)) return a == b;
 
   return a === b;
 };
@@ -197,10 +200,8 @@ const relational = (operator, a, b) => {
   let right = b;
 
   // numeric coercion of numeric strings under numeric operators
-  if (typeof left === 'number' && typeof right === 'string' && isNumeric(right))
-    right = Number(right);
-  else if (typeof right === 'number' && typeof left === 'string' && isNumeric(left))
-    left = Number(left);
+  if (isNumber(left) && typeof right === 'string' && isNumeric(right)) right = Number(right);
+  else if (isNumber(right) && typeof left === 'string' && isNumeric(left)) left = Number(left);
   else if (typeof left === 'string' && typeof right === 'string') {
     // case-insensitive string ordering
     left = left.toLowerCase();
@@ -208,10 +209,13 @@ const relational = (operator, a, b) => {
   }
 
   // ordering is defined only between two numbers or two strings; any other pair
-  // (boolean, array, object, mixed types) is false rather than host-language coercion
-  const bothNumbers = typeof left === 'number' && typeof right === 'number';
+  // (boolean, array, object, mixed types) is unordered rather than host-language coercion.
+  // Like in RFC 9535, `<=` and `>=` still hold for an unordered pair that is equal.
+  const bothNumbers = isNumber(left) && isNumber(right);
   const bothStrings = typeof left === 'string' && typeof right === 'string';
-  if (!bothNumbers && !bothStrings) return false;
+  if (!bothNumbers && !bothStrings) {
+    return (operator === '<=' || operator === '>=') && looseEquals(a, b);
+  }
 
   switch (operator) {
     case '<':
@@ -226,6 +230,9 @@ const relational = (operator, a, b) => {
       return false;
   }
 };
+
+// numbers, including BigInts (e.g. from a BigInt-aware JSON parser)
+const isNumber = (value) => typeof value === 'number' || typeof value === 'bigint';
 
 // a numeric string is one matching the grammar's own `number` rule (the JSON number
 // format): no hex/binary/octal prefixes, leading zeros, '+' sign or surrounding whitespace

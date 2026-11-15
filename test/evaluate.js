@@ -130,6 +130,35 @@ describe('evaluate', function () {
       assert.isFalse(evaluate("$response.body#/obj < 'a'", { resolve: resolveValues }));
       assert.isFalse(evaluate('$response.body#/str > 5', { resolve: resolveValues }));
       assert.isFalse(evaluate('$response.body#/str <= 5', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/t < $response.body#/t', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/t <= 1', { resolve: resolveValues }));
+    });
+
+    specify('should hold <= and >= for an equal pair that has no ordering', function () {
+      const values = { '$response.body#/t': true, '$response.body#/f': false };
+      const resolveValues = resolverFrom(values);
+
+      assert.isTrue(evaluate('$response.body#/t <= true', { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/t >= $response.body#/t', { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/f >= false', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/t < true', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/t > true', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/t >= false', { resolve: resolveValues }));
+    });
+
+    specify('should order and compare BigInts as numbers', function () {
+      const values = { '$response.body#/big': 10n, '$response.body#/huge': 2n ** 64n };
+      const resolveValues = resolverFrom(values);
+
+      assert.isTrue(evaluate('$response.body#/big == 10', { resolve: resolveValues }));
+      assert.isTrue(evaluate("$response.body#/big == '10'", { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/big < 11', { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/big >= 10', { resolve: resolveValues }));
+      assert.isTrue(evaluate("$response.body#/big > '9'", { resolve: resolveValues }));
+      assert.isTrue(
+        evaluate('$response.body#/huge > 18446744073709550000', { resolve: resolveValues }),
+      );
+      assert.isFalse(evaluate('$response.body#/big != 10', { resolve: resolveValues }));
     });
 
     specify(
