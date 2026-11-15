@@ -55,11 +55,21 @@ const prepare = (condition, resolve, name) => {
     throw new TypeError(`${name} requires a "resolve" function in options`);
   }
 
-  const { result, tree } = parse(condition);
-  if (!result.success) {
+  let parsed;
+  try {
+    parsed = parse(condition);
+  } catch (error) {
+    // parse throws (rather than failing) for an operand that matches the grammar but is not
+    // a valid runtime expression, e.g. `$x == 1`; that is still an invalid condition
+    throw new ArazzoCriterionEvaluateError('Invalid criterion condition', {
+      condition,
+      cause: error,
+    });
+  }
+  if (!parsed.result.success) {
     throw new ArazzoCriterionEvaluateError('Invalid criterion condition', { condition });
   }
-  return tree;
+  return parsed.tree;
 };
 
 // a native Promise means an async resolver, whose Promise would otherwise be
