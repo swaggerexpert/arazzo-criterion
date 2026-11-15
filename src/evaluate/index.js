@@ -175,9 +175,9 @@ const looseEquals = (a, b) => {
   const bNull = b === null || b === undefined;
   if (aNull || bNull) return aNull && bNull;
 
-  // arrays, objects and functions are never equal: the result must not depend on whether
-  // `resolve` returned the same reference twice (compare them with a jsonpath criterion)
-  if (isStructured(a) || isStructured(b)) return false;
+  // only JSON scalars are compared: arrays, objects and non-JSON values are never equal,
+  // whatever their identity (compare structured values with a jsonpath criterion)
+  if (!isJSONScalar(a) || !isJSONScalar(b)) return false;
 
   // string comparisons MUST be case insensitive
   if (typeof a === 'string' && typeof b === 'string') {
@@ -185,11 +185,8 @@ const looseEquals = (a, b) => {
   }
 
   // numeric strings SHOULD be coerced to numbers when compared with a number
-  if (isNumber(a) && typeof b === 'string' && isNumeric(b)) return a == Number(b);
-  if (isNumber(b) && typeof a === 'string' && isNumeric(a)) return Number(a) == b;
-
-  // a number and a BigInt are equal when they have the same mathematical value
-  if (isNumber(a) && isNumber(b)) return a == b;
+  if (typeof a === 'number' && typeof b === 'string' && isNumeric(b)) return a === Number(b);
+  if (typeof b === 'number' && typeof a === 'string' && isNumeric(a)) return Number(a) === b;
 
   return a === b;
 };
@@ -202,18 +199,19 @@ const relational = (operator, a, b) => {
   let right = b;
 
   // numeric coercion of numeric strings under numeric operators
-  if (isNumber(left) && typeof right === 'string' && isNumeric(right)) right = Number(right);
-  else if (isNumber(right) && typeof left === 'string' && isNumeric(left)) left = Number(left);
+  if (typeof left === 'number' && typeof right === 'string' && isNumeric(right))
+    right = Number(right);
+  else if (typeof right === 'number' && typeof left === 'string' && isNumeric(left))
+    left = Number(left);
   else if (typeof left === 'string' && typeof right === 'string') {
     // case-insensitive string ordering
     left = left.toLowerCase();
     right = right.toLowerCase();
   }
 
-  // ordering is defined only between two numbers or two strings; any other pair
-  // (boolean, array, object, mixed types) is unordered rather than host-language coercion.
-  // Like in RFC 9535, `<=` and `>=` still hold for an unordered pair that is equal.
-  const bothNumbers = isNumber(left) && isNumber(right);
+  // only two numbers or two strings are ordered; any other pair is unordered rather than
+  // left to host-language coercion, and, as in RFC 9535, `<=` / `>=` hold if it is equal
+  const bothNumbers = typeof left === 'number' && typeof right === 'number';
   const bothStrings = typeof left === 'string' && typeof right === 'string';
   if (!bothNumbers && !bothStrings) {
     return (operator === '<=' || operator === '>=') && looseEquals(a, b);
@@ -233,10 +231,10 @@ const relational = (operator, a, b) => {
   }
 };
 
-const isStructured = (value) => typeof value === 'object' || typeof value === 'function';
-
-// numbers, including BigInts (e.g. from a BigInt-aware JSON parser)
-const isNumber = (value) => typeof value === 'number' || typeof value === 'bigint';
+// evaluation is defined on the JSON value model, independent of the host language
+// (null is handled separately; BigInt, Date, Map, functions, ... are not JSON values)
+const isJSONScalar = (value) =>
+  typeof value === 'number' || typeof value === 'string' || typeof value === 'boolean';
 
 // a numeric string is one matching the grammar's own `number` rule (the JSON number
 // format): no hex/binary/octal prefixes, leading zeros, '+' sign or surrounding whitespace
