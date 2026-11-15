@@ -70,7 +70,7 @@
     "SECURITY.md"
   ],
   "dependencies": {
-    "@swaggerexpert/arazzo-runtime-expression": "^3.1.0",
+    "@swaggerexpert/arazzo-runtime-expression": "^3.4.0",
     "apg-lite": "^1.0.7"
   },
   "devDependencies": {
