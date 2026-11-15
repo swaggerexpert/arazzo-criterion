@@ -276,7 +276,7 @@ await evaluateAsync('$statusCode == 500 && $response.body.status', { resolve });
 
 - `&&` and `||` short-circuit: the right operand is resolved only after the left one has settled without deciding the result.
 - Every failure rejects the returned Promise, including invalid input, an invalid condition, and a `resolve` that throws or rejects. `evaluateAsync` never throws synchronously.
-- Only what `resolve` returns is awaited, when it is a *thenable* (an object or function with a `then` method). Data reached by navigation (`$response.body.data[0].id`) is compared as is.
+- Values are awaited the way `await` does it: any *thenable* (an object or function with a `then` method) is waited on.
 - `util.promisify(evaluate)` returns `evaluateAsync`.
 
 #### Errors

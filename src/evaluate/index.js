@@ -20,7 +20,7 @@ import ArazzoCriterionEvaluateError from '../errors/ArazzoCriterionEvaluateError
  */
 const evaluate = (condition, { resolve } = {}) => {
   const tree = prepare(condition, resolve, 'evaluate');
-  return toBoolean(evaluateNode(tree, syncMode(resolve)));
+  return toBoolean(evaluateNode(tree, resolve));
 };
 
 /**
@@ -28,13 +28,11 @@ const evaluate = (condition, { resolve } = {}) => {
  * may only be available asynchronously.
  *
  * Same semantics as `evaluate`, except that `resolve` may return the value or a
- * Promise (any thenable) of it, and the result is always a Promise of a boolean.
- * Only values returned by `resolve` are awaited; data reached by navigation is
- * compared as is. Every failure
- * (invalid input, an unparseable condition, a `resolve` that throws or rejects)
- * rejects the returned Promise. `&&` and `||` still short-circuit: the right
- * operand is resolved only after the left one has settled without deciding the
- * result.
+ * Promise of it, which is awaited, and the result is always a Promise of a
+ * boolean. Every failure (invalid input, an unparseable condition, a `resolve`
+ * that throws or rejects) rejects the returned Promise. `&&` and `||` still
+ * short-circuit: the right operand is resolved only after the left one has
+ * settled without deciding the result.
  *
  * @example
  * await evaluateAsync('$statusCode == 200', {
@@ -43,8 +41,7 @@ const evaluate = (condition, { resolve } = {}) => {
  */
 export const evaluateAsync = async (condition, { resolve } = {}) => {
   const tree = prepare(condition, resolve, 'evaluateAsync');
-  const result = asyncStep(evaluateNode(tree, asyncMode(resolve)), toBoolean);
-  return result instanceof Pending ? (await result.promise).value : result;
+  return toBoolean(await evaluateNodeAsync(tree, resolve));
 };
 
 // util.promisify(evaluate) returns evaluateAsync; Symbol.for keeps this free of node:util.
@@ -65,96 +62,90 @@ const prepare = (condition, resolve, name) => {
   return tree;
 };
 
-const isThenable = (value) =>
-  value !== null &&
-  (typeof value === 'object' || typeof value === 'function') &&
-  typeof value.then === 'function';
-
-/*
- * The evaluator is written once and runs in a mode: how `resolve` is called and
- * how each operand is passed on (`step(value, continuation)`). Only values
- * returned by `resolve` are ever inspected — data reached by navigation is
- * compared as is in both modes, whatever properties it carries.
- */
-
-// sync: `resolve` must hand the value back. A native Promise means an async
-// resolver, which would otherwise be compared as a plain object.
-const syncMode = (resolve) => ({
-  resolve: (expression, ast) => {
-    const value = resolve(expression, ast);
-    if (value instanceof Promise) {
-      throw new TypeError('resolve returned a Promise; use evaluateAsync to await resolved values');
-    }
-    return value;
-  },
-  step: (value, continuation) => continuation(value),
-});
-
-// async: a pending operand is a Pending, never a bare Promise, so a settled
-// value is never adopted as a thenable on its way through the chain.
-class Pending {
-  constructor(promise) {
-    this.promise = promise; // resolves to { value }
+// a native Promise means an async resolver, whose Promise would otherwise be
+// compared as a plain object.
+const resolveSync = (resolve, expression, ast) => {
+  const value = resolve(expression, ast);
+  if (value instanceof Promise) {
+    throw new TypeError('resolve returned a Promise; use evaluateAsync to await resolved values');
   }
-}
+  return value;
+};
 
-const settle = (result) => (result instanceof Pending ? result.promise : { value: result });
-
-const asyncStep = (value, continuation) =>
-  value instanceof Pending
-    ? new Pending(value.promise.then(({ value: settled }) => settle(continuation(settled))))
-    : continuation(value);
-
-const asyncMode = (resolve) => ({
-  resolve: (expression, ast) => {
-    const value = resolve(expression, ast);
-    return isThenable(value)
-      ? new Pending(Promise.resolve(value).then((settled) => ({ value: settled })))
-      : value;
-  },
-  step: asyncStep,
-});
-
-const evaluateNode = (node, mode) => {
+const evaluateNode = (node, resolve) => {
   switch (node.type) {
     case 'LogicalExpression':
-      return evaluateLogical(node, mode);
+      return evaluateLogical(node, resolve);
     case 'UnaryExpression':
-      return mode.step(evaluateNode(node.argument, mode), (value) => !toBoolean(value));
+      return !toBoolean(evaluateNode(node.argument, resolve));
     case 'BinaryExpression':
-      return evaluateComparison(node, mode);
+      return compare(
+        node.operator,
+        evaluateNode(node.left, resolve),
+        evaluateNode(node.right, resolve),
+      );
     case 'Literal':
       return node.value;
     case 'RuntimeExpression':
-      return mode.resolve(node.text, node.expression);
+      return resolveSync(resolve, node.text, node.expression);
     case 'RuntimeExpressionNavigation':
-      return evaluateNavigation(node, mode);
+      return navigate(
+        resolveSync(resolve, node.expression.text, node.expression.expression),
+        node.navigation,
+      );
     default:
       throw new ArazzoCriterionEvaluateError(`Unknown AST node type: ${node.type}`);
   }
 };
 
-const evaluateLogical = (node, mode) =>
-  mode.step(evaluateNode(node.left, mode), (left) => {
-    const decided = node.operator === '&&' ? !toBoolean(left) : toBoolean(left);
-    if (decided) return toBoolean(left);
-    return mode.step(evaluateNode(node.right, mode), toBoolean);
-  });
-
-const evaluateNavigation = (node, mode) =>
-  mode.step(mode.resolve(node.expression.text, node.expression.expression), (resolved) => {
-    let value = resolved;
-    for (const accessor of node.navigation) {
-      if (value == null) return undefined;
-      value = accessor.type === 'MemberAccess' ? value[accessor.name] : value[accessor.value];
-    }
-    return value;
-  });
-
-const evaluateComparison = (node, mode) =>
-  mode.step(evaluateNode(node.left, mode), (left) =>
-    mode.step(evaluateNode(node.right, mode), (right) => compare(node.operator, left, right)),
+const evaluateLogical = (node, resolve) => {
+  if (node.operator === '&&') {
+    return (
+      toBoolean(evaluateNode(node.left, resolve)) && toBoolean(evaluateNode(node.right, resolve))
+    );
+  }
+  // '||'
+  return (
+    toBoolean(evaluateNode(node.left, resolve)) || toBoolean(evaluateNode(node.right, resolve))
   );
+};
+
+// the async counterpart of evaluateNode: same cases, each operand awaited in turn
+const evaluateNodeAsync = async (node, resolve) => {
+  switch (node.type) {
+    case 'LogicalExpression': {
+      const left = toBoolean(await evaluateNodeAsync(node.left, resolve));
+      if (node.operator === '&&' ? !left : left) return left;
+      return toBoolean(await evaluateNodeAsync(node.right, resolve));
+    }
+    case 'UnaryExpression':
+      return !toBoolean(await evaluateNodeAsync(node.argument, resolve));
+    case 'BinaryExpression': {
+      const left = await evaluateNodeAsync(node.left, resolve);
+      return compare(node.operator, left, await evaluateNodeAsync(node.right, resolve));
+    }
+    case 'Literal':
+      return node.value;
+    case 'RuntimeExpression':
+      return resolve(node.text, node.expression);
+    case 'RuntimeExpressionNavigation':
+      return navigate(
+        await resolve(node.expression.text, node.expression.expression),
+        node.navigation,
+      );
+    default:
+      throw new ArazzoCriterionEvaluateError(`Unknown AST node type: ${node.type}`);
+  }
+};
+
+const navigate = (resolved, navigation) => {
+  let value = resolved;
+  for (const step of navigation) {
+    if (value == null) return undefined;
+    value = step.type === 'MemberAccess' ? value[step.name] : value[step.value];
+  }
+  return value;
+};
 
 const compare = (operator, left, right) => {
   switch (operator) {

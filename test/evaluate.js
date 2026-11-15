@@ -263,17 +263,6 @@ describe('evaluateAsync', function () {
     );
   });
 
-  specify('should not await data reached by navigation', async function () {
-    const never = { then() {} };
-    const values = { '$response.body': { nested: never } };
-
-    assert.isTrue(
-      await evaluateAsync('$response.body.nested != null', {
-        resolve: async (expression) => values[expression],
-      }),
-    );
-  });
-
   specify('should be what util.promisify(evaluate) returns', async function () {
     assert.isTrue(await promisify(evaluate)('$statusCode == 200', { resolve }));
   });

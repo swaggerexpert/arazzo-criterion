@@ -257,8 +257,6 @@ export interface EvaluateAsyncOptions {
 /**
  * Evaluate a "simple" criterion condition against values that may only be
  * available asynchronously. Always returns a Promise; every failure rejects it.
- * Only values returned by `resolve` are awaited; data reached by navigation is
- * compared as is.
  */
 export function evaluateAsync(condition: string, options: EvaluateAsyncOptions): Promise<boolean>;
 
