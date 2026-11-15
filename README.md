@@ -187,6 +187,10 @@ import { parse, XMLTranslator } from '@swaggerexpert/arazzo-criterion';
 const { tree: xml } = parse('$statusCode == 200', { translator: new XMLTranslator() });
 ```
 
+The XML is produced by [apg-lite](https://github.com/ldthomas/apg-lite): XML special characters in the source and node texts
+are escaped, and characters that are invalid in XML are replaced with U+FFFD, so that it is always well-formed
+(e.g. for string literals containing `<` or `&`).
+
 ##### Statistics
 
 `parse` returns additional statistical information about the parsing process.
