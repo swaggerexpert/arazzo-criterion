@@ -255,7 +255,7 @@ evaluate('$response.body.data[0].id > 10', { resolve }); // => true
 Evaluation follows the "loose comparison" rules from the Arazzo specification:
 
 - string comparisons are **case-insensitive**;
-- numeric strings are **coerced** to numbers when compared with a number;
+- numeric strings are **coerced** to numbers when compared with a number; a numeric string is one in the JSON number format (`42`, `-0.5`, `1e3`), so hex/binary/octal prefixes, leading zeros, a `+` sign, and surrounding whitespace are not numeric;
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
