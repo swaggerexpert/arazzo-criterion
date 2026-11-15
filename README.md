@@ -267,6 +267,7 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
 - `<`, `<=`, `>`, `>=` order only two numbers (including `BigInt`s) or two strings (after numeric-string coercion); any other pair (booleans, arrays, objects, mixed types) has no order, so `<` and `>` are `false`, while `<=` and `>=` are `true` only when the pair is equal (e.g. `true <= true`), as in RFC 9535;
 - arrays and objects are never equal: `==` is `false` and `!=` is `true` whenever either side is an array or object (even the same value); compare structured values with a `jsonpath` criterion instead;
+- `.member` and `[index]` read only the resolved value's own members (e.g. `$response.body.constructor` is missing, not the `Object` constructor);
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
 Numeric coercion applies only when the other operand is a number. Two numeric strings are compared as (case-insensitive) text, so
