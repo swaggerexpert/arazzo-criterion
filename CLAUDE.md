@@ -33,17 +33,21 @@ conditions, using an ABNF grammar and the apg-lite parser generator. The `regex`
 - **`src/parse/translators/`** - Translators extending apg-lite's `Ast`:
   - `CSTTranslator` - Concrete Syntax Tree with `{ type, text, start, length, children }` nodes.
   - `ASTTranslator` - Abstract Syntax Tree with semantic node types (extends CSTTranslator).
+  - `XMLTranslator` - XML representation of the CST (apg-lite `toXml()`, extends CSTTranslator).
 - **`src/parse/translators/ASTTranslator/transformers.js`** - CST → AST transformers. Collapses the
   precedence-chain rules (`logical-or-expr`, `logical-and-expr`) into left-associative
-  `LogicalExpression` nodes. For a `runtime-expression-operand` token, `splitOperand` finds the longest
-  prefix that **parses via `@swaggerexpert/arazzo-runtime-expression`'s `parse()`** (that is the RE base
-  and its sub-AST); `parseNavigation` turns the remainder (`.member` / `[index]`) into the accessor path.
-- **`src/evaluate/index.js`** - `evaluate(conditionOrAST, { resolve })`. Applies the spec's
+  `LogicalExpression` nodes. For a `runtime-expression-operand` token, `parseOperand` uses
+  `splitAtRuntimeExpression` to find the longest prefix that **parses via
+  `@swaggerexpert/arazzo-runtime-expression`'s `parse()`** (the RE base, parsed again for its sub-AST);
+  `parseNavigation` turns the remainder (`.member` / `[index]`) into the accessor path. `isValidOperand`
+  does the same check without building trees, for the operand callback.
+- **`src/evaluate/index.js`** - `evaluate(condition, { resolve })`. Applies the spec's
   loose-comparison semantics (case-insensitive strings, numeric-string coercion, null rules,
-  truthiness). Runtime expression values come from the caller-supplied
+  truthiness) on the JSON value model: only JSON scalars are compared, navigation reads own members. Runtime expression values come from the caller-supplied
   `resolve(expression, ast)` function (raw string + parsed sub-AST).
 - **`src/parse/callbacks/cst.js`** - Generic CST callback factory (copied from the runtime-expression package).
-- **`src/parse/callbacks/operand.js`** - Parser rule callback that rejects operand tokens that are not valid runtime expressions.
+- **`src/parse/callbacks/operand.js`** - Parser rule callback that rejects operand tokens that are not
+  valid runtime expressions (via `isValidOperand`), so `parse()` validates operands for every translator.
 
 ### Grammar Structure
 
@@ -56,9 +60,9 @@ criterion accessors (`.member`, `[index]`) both use `.` as a separator, so the b
 cannot be expressed in a context-free grammar. The grammar therefore captures the operand as one
 maximal token (`runtime-expression-operand = "$" 1*operand-char`), where `operand-char` excludes
 whitespace and the criterion-significant characters (`! & ( ) < = > { | }`) so a trailing operator
-is not absorbed. The split into base + navigation is resolved at AST-build time, NOT in the grammar:
+is not absorbed. The split into base + navigation is resolved outside the grammar:
 
-- `splitOperand` asks `@swaggerexpert/arazzo-runtime-expression`'s `parse()` for the longest leading
+- `splitAtRuntimeExpression` asks `@swaggerexpert/arazzo-runtime-expression`'s `parse()` for the longest leading
   substring that is a valid runtime expression (using the failing parse's `maxMatched`, walked down to
   the longest clean prefix). That prefix is the RE base; its parsed tree is the RE sub-AST.
 - `parseNavigation` parses the remainder (`.member` / `[index]`) into accessor nodes.
@@ -79,17 +83,18 @@ them (`$request.header.x[0]`); query and path names absorb both (`$request.query
 
 ### Public API (exported from `src/index.js`)
 
-- `parse(condition, options?)` - Parse a condition, returns `{ result, tree }`. `options.translator`:
-  ASTTranslator (default), CSTTranslator, or null (validation only). Also `options.trace`, `options.stats`.
+- `parse(condition, options?)` - Parse a condition, returns `{ result, tree, stats, trace }`.
+  `options.translator`: ASTTranslator (default), CSTTranslator, XMLTranslator, or null (validation only).
+  Also `options.startRule`, `options.trace`, `options.stats`.
 - `test(condition)` - Validate a condition, returns boolean.
-- `evaluate(conditionOrAST, { resolve })` - Evaluate against caller-supplied values, returns boolean.
+- `evaluate(condition, { resolve })` - Evaluate against caller-supplied values, returns boolean.
   Throws a `TypeError` if `resolve` returns a native Promise. `util.promisify(evaluate)` returns
   `evaluateAsync` (via `Symbol.for('nodejs.util.promisify.custom')`, as ApiDOM's `traverse` does).
 - `evaluateAsync(condition, { resolve })` - Same semantics, `resolve` may return a Promise; returns
   `Promise<boolean>` and reports every failure as a rejection. `src/evaluate/index.js` has two small
   tree walkers, `evaluateNode` (sync) and `evaluateNodeAsync` (async, awaits each operand in turn),
   sharing the comparison (`compare`) and navigation (`navigate`) helpers.
-- `Grammar`, `CSTTranslator`, `ASTTranslator`, `Trace`.
+- `Grammar`, `CSTTranslator`, `ASTTranslator`, `XMLTranslator`, `Trace`.
 - `ArazzoCriterionError`, `ArazzoCriterionParseError`, `ArazzoCriterionEvaluateError`.
 
 ### Testing

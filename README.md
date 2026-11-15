@@ -190,10 +190,6 @@ import { parse, XMLTranslator } from '@swaggerexpert/arazzo-criterion';
 const { tree: xml } = parse('$statusCode == 200', { translator: new XMLTranslator() });
 ```
 
-The XML is produced by [apg-lite](https://github.com/ldthomas/apg-lite): XML special characters in the source and node texts
-are escaped, and characters that are invalid in XML are replaced with U+FFFD, so that it is always well-formed
-(e.g. for string literals containing `<` or `&`).
-
 ##### Statistics
 
 `parse` returns additional statistical information about the parsing process.
@@ -264,30 +260,15 @@ evaluate('$response.body.data[0].id > 10', { resolve }); // => true
 Evaluation follows the "loose comparison" rules from the Arazzo specification:
 
 - string comparisons are **case-insensitive**;
-- numeric strings are **coerced** to numbers when compared with a number; a numeric string is one in the JSON number format (`42`, `-0.5`, `1e3`) whose value is finite (`1e400` is not), so hex/binary/octal prefixes, leading zeros, a `+` sign, and surrounding whitespace are not numeric;
+- numeric strings are **coerced** to numbers when compared with a number; a numeric string is a finite number in JSON format (`42`, `-0.5`, `1e3`, but not `0x10`, `+1`, `01`, ` 42 ` or `1e400`);
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
-- `<`, `<=`, `>`, `>=` order only two numbers or two strings (after numeric-string coercion); any other pair (booleans, arrays, objects, mixed types) has no order, so `<` and `>` are `false`, while `<=` and `>=` are `true` only when the pair is equal (e.g. `true <= true`), as in RFC 9535;
-- arrays and objects are never equal: `==` is `false` and `!=` is `true` whenever either side is an array or object (even the same value); compare structured values with a `jsonpath` criterion instead;
-- evaluation is defined on the JSON value model (number, string, boolean, null, array, object), so it does not depend on the host language: `resolve` should return JSON values, with numbers as JavaScript numbers. Any other value (a `BigInt`, `Date`, `Map`, `Buffer`, class instance, function or symbol) is never equal and has no order;
-- `.member` and `[index]` read only the resolved value's own members (e.g. `$response.body.constructor` is missing, not the `Object` constructor);
+- only two numbers (after numeric-string coercion) or two strings are ordered; for any other pair `<` and `>` are `false`, and `<=` and `>=` are `true` only when the pair is equal;
+- only JSON scalars are compared: arrays, objects and non-JSON values (e.g. `BigInt`, `Date`) are never equal; use a `jsonpath` criterion for structured values;
+- `.member` and `[index]` read only own members of the resolved value;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
-Numeric coercion applies only when the other operand is a number. Two numeric strings are compared as (case-insensitive) text, so
-comparing two HTTP header values, or a header value with a quoted literal, orders them lexically:
-
-```js
-const context = { '$response.header.X-Remaining': '10', '$response.header.X-Limit': '9' };
-const resolve = (expression) => context[expression];
-
-evaluate('$response.header.X-Remaining > $response.header.X-Limit', { resolve }); // => false ('10' < '9' as text)
-evaluate("$response.header.X-Remaining > '9'", { resolve }); // => false
-evaluate('$response.header.X-Remaining > 9', { resolve }); // => true (compared with a number literal)
-```
-
-To get numeric ordering, compare against a number literal (or a value that resolves to a number). The specification's wording
-("numeric strings SHOULD be coerced to numbers when compared with numeric operators") allows both readings; this library follows
-the one that keeps string-to-string comparison case-insensitive, as the specification requires. The question is raised upstream in
-[OAI/Arazzo-Specification#584](https://github.com/OAI/Arazzo-Specification/issues/584).
+Two numeric strings, such as two HTTP header values, are compared as text (`'10' < '9'`); compare with a number literal
+to order them numerically (see [OAI/Arazzo-Specification#584](https://github.com/OAI/Arazzo-Specification/issues/584)).
 
 `evaluate` is synchronous: `resolve` must return the value itself. If it returns a native Promise (for example, `resolve` is an `async` function), `evaluate` throws a `TypeError` instead of comparing the Promise object.
 
@@ -326,6 +307,7 @@ import {
 raised during parsing, and **ArazzoCriterionEvaluateError** is thrown by `evaluate` (for example, when the condition
 is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`. `evaluateAsync` rejects with
 the same errors instead of throwing them.
+Errors thrown by `resolve` are not wrapped.
 
 ```js
 import { evaluate, ArazzoCriterionEvaluateError } from '@swaggerexpert/arazzo-criterion';
@@ -453,36 +435,17 @@ DIGIT          = %x30-39             ; 0-9
 
 ### Limitations
 
-A runtime-expression operand cannot contain whitespace or any of the criterion-significant characters `! & ( ) < = > { | }`.
-
-Runtime expressions and criterion operators share an alphabet: a query, header or path name, or an `operationId`, may legitimately contain
-`=`, `&`, `<`, `>` or spaces, but inside a condition the same characters start operators. `$request.query.a=b == 1` could be the operand
-`$request.query.a` followed by a malformed operator, or the operand `$request.query.a=b` compared with `1`; no context-free grammar can
-tell them apart. The grammar therefore matches an operand as one bounded token that stops at these characters, so the common case
-(`$request.query.limit == 10`) parses correctly and an operand that contains them is rejected rather than silently mis-parsed:
+A runtime expression operand cannot contain whitespace or any of the characters `! & ( ) < = > { | }`, as they are
+criterion operators; such conditions are rejected rather than mis-parsed:
 
 ```js
-import { test } from '@swaggerexpert/arazzo-criterion';
-
-test('$request.query.limit == 10'); // => true
-test('$request.query.a=b == 1'); // => false ('=' in a query name)
-test('$request.query.a&b'); // => false ('&' in a query name)
-test('$sourceDescriptions.d.get<Pet> != null'); // => false ('<' and '>' in an operationId)
-test('$response.body#/a=b == 1'); // => false ('=' in a JSON Pointer reference token)
-test('$response.body#/a~1b == 1'); // => true (ordinary JSON Pointers are fine)
+test('$request.query.a=b == 1'); // => false
+test('$sourceDescriptions.d.get<Pet> != null'); // => false
+test('$response.body#/a=b == 1'); // => false
 ```
 
-JSON Pointer is no escape hatch: a pointer has no terminator, so `$response.body#/a=b == 1` is just as ambiguous. The specification
-defines no quoting mechanism for `simple` operands, and inventing one would make conditions non-portable. To reach a member whose name
-contains these characters, use a `jsonpath` criterion, which quotes member names:
-
-```yaml
-- context: $response.body
-  type: jsonpath
-  condition: $.pets[?@['a=b'] == 1]
-```
-
-There is no workaround for query, header or path names, or `operationId`s, that contain these characters.
+To reach a member whose name contains these characters, use a `jsonpath` criterion, which quotes member names
+(`$.pets[?@['a=b'] == 1]`).
 
 ## License
 
