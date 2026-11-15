@@ -69,8 +69,10 @@ be validated against the Runtime Expressions grammar. `parse()` and `test()` do 
 
 Because the RE parser decides where the expression ends, reference families whose identifiers include
 dots (`$inputs`, `$outputs`, `$workflows.*`, `$components.*`) consume their dots (no `.`-navigation into
-them; use JSON Pointer `#/a/b`), while bounded families (`$response.body`, `$request.header.x`) stop
-early so the trailing `.member` / `[index]` become criterion accessors (a `RuntimeExpressionNavigation` node).
+them; use JSON Pointer `#/a/b`), while bounded families (`$response.body`, `$request.body`, `$statusCode`,
+`$url`, `$method`) stop early so the trailing `.member` / `[index]` become criterion accessors (a
+`RuntimeExpressionNavigation` node). Header names absorb `.` (an RFC 9110 `tchar`), so only `[index]` follows
+them (`$request.header.x[0]`); query and path names absorb both (`$request.query.q[0]` is the name `q[0]`).
 
 ### Public API (exported from `src/index.js`)
 
