@@ -64,7 +64,7 @@ const prepare = (condition, resolve, name) => {
 
 // a native Promise means an async resolver, whose Promise would otherwise be
 // compared as a plain object.
-const resolveSync = (resolve, expression, ast) => {
+const resolveValue = (resolve, expression, ast) => {
   const value = resolve(expression, ast);
   if (value instanceof Promise) {
     throw new TypeError('resolve returned a Promise; use evaluateAsync to await resolved values');
@@ -87,10 +87,10 @@ const evaluateNode = (node, resolve) => {
     case 'Literal':
       return node.value;
     case 'RuntimeExpression':
-      return resolveSync(resolve, node.text, node.expression);
+      return resolveValue(resolve, node.text, node.expression);
     case 'RuntimeExpressionNavigation':
       return navigate(
-        resolveSync(resolve, node.expression.text, node.expression.expression),
+        resolveValue(resolve, node.expression.text, node.expression.expression),
         node.navigation,
       );
     default:
@@ -113,11 +113,8 @@ const evaluateLogical = (node, resolve) => {
 // the async counterpart of evaluateNode: same cases, each operand awaited in turn
 const evaluateNodeAsync = async (node, resolve) => {
   switch (node.type) {
-    case 'LogicalExpression': {
-      const left = toBoolean(await evaluateNodeAsync(node.left, resolve));
-      if (node.operator === '&&' ? !left : left) return left;
-      return toBoolean(await evaluateNodeAsync(node.right, resolve));
-    }
+    case 'LogicalExpression':
+      return evaluateLogicalAsync(node, resolve);
     case 'UnaryExpression':
       return !toBoolean(await evaluateNodeAsync(node.argument, resolve));
     case 'BinaryExpression': {
@@ -136,6 +133,13 @@ const evaluateNodeAsync = async (node, resolve) => {
     default:
       throw new ArazzoCriterionEvaluateError(`Unknown AST node type: ${node.type}`);
   }
+};
+
+const evaluateLogicalAsync = async (node, resolve) => {
+  const left = toBoolean(await evaluateNodeAsync(node.left, resolve));
+  // the right operand is evaluated only when the left one does not decide the result
+  if (node.operator === '&&' ? !left : left) return left;
+  return toBoolean(await evaluateNodeAsync(node.right, resolve));
 };
 
 const navigate = (resolved, navigation) => {
