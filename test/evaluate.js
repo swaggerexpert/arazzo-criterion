@@ -52,6 +52,39 @@ describe('evaluate', function () {
     specify('should be false when comparing null relationally', function () {
       assert.isFalse(evaluate('$response.body.missing > 0', { resolve }));
     });
+
+    specify('should be false when comparing mismatched or structured types', function () {
+      const values = {
+        '$response.body#/t': true,
+        '$response.body#/f': false,
+        '$response.body#/empty': [],
+        '$response.body#/arr': [1, 2],
+        '$response.body#/obj': { a: 1 },
+        '$response.body#/str': 'abc',
+      };
+      const resolveValues = resolverFrom(values);
+
+      assert.isFalse(evaluate('$response.body#/t > 0', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/f < 1', { resolve: resolveValues }));
+      assert.isFalse(
+        evaluate('$response.body#/t >= $response.body#/f', { resolve: resolveValues }),
+      );
+      assert.isFalse(evaluate('$response.body#/empty < 1', { resolve: resolveValues }));
+      assert.isFalse(
+        evaluate('$response.body#/arr >= $response.body#/arr', { resolve: resolveValues }),
+      );
+      assert.isFalse(evaluate("$response.body#/obj < 'a'", { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/str > 5', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/str <= 5', { resolve: resolveValues }));
+    });
+
+    specify(
+      'should still order numeric strings against numbers and strings against strings',
+      function () {
+        assert.isTrue(evaluate('$inputs.age > 29', { resolve }));
+        assert.isTrue(evaluate("$inputs.name > 'abc'", { resolve }));
+      },
+    );
   });
 
   context('navigation', function () {

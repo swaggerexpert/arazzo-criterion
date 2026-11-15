@@ -203,6 +203,12 @@ const relational = (operator, a, b) => {
     right = right.toLowerCase();
   }
 
+  // ordering is defined only between two numbers or two strings; any other pair
+  // (boolean, array, object, mixed types) is false rather than host-language coercion
+  const bothNumbers = typeof left === 'number' && typeof right === 'number';
+  const bothStrings = typeof left === 'string' && typeof right === 'string';
+  if (!bothNumbers && !bothStrings) return false;
+
   switch (operator) {
     case '<':
       return left < right;
