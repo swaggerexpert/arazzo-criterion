@@ -173,6 +173,10 @@ const looseEquals = (a, b) => {
   const bNull = b === null || b === undefined;
   if (aNull || bNull) return aNull && bNull;
 
+  // arrays and objects are never equal: the result must not depend on whether
+  // `resolve` returned the same reference twice (compare them with a jsonpath criterion)
+  if (typeof a === 'object' || typeof b === 'object') return false;
+
   // string comparisons MUST be case insensitive
   if (typeof a === 'string' && typeof b === 'string') {
     return a.toLowerCase() === b.toLowerCase();
