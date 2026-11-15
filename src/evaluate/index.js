@@ -8,25 +8,68 @@ import ArazzoCriterionEvaluateError from '../errors/ArazzoCriterionEvaluateError
  * receives the runtime expression string and its parsed sub-AST, and returns the
  * concrete value.
  *
+ * `resolve` must return the value itself: a `resolve` returning a native Promise
+ * (e.g. an `async` function) makes `evaluate` throw a `TypeError` rather than
+ * compare the Promise object. Use `evaluateAsync` when values are only available
+ * asynchronously.
+ *
  * @example
  * evaluate('$statusCode == 200', {
  *   resolve: (expression, ast) => (expression === '$statusCode' ? 200 : undefined),
  * }); // => true
  */
 const evaluate = (condition, { resolve } = {}) => {
+  const tree = prepare(condition, resolve, 'evaluate');
+  return toBoolean(evaluateNode(tree, resolve));
+};
+
+/**
+ * Evaluate a "simple" Arazzo criterion condition whose runtime expression values
+ * may only be available asynchronously.
+ *
+ * Same semantics as `evaluate`, except that `resolve` may return the value or a
+ * Promise of it, which is awaited, and the result is always a Promise of a
+ * boolean. Every failure (invalid input, an unparseable condition, a `resolve`
+ * that throws or rejects) rejects the returned Promise. `&&` and `||` still
+ * short-circuit: the right operand is resolved only after the left one has
+ * settled without deciding the result.
+ *
+ * @example
+ * await evaluateAsync('$statusCode == 200', {
+ *   resolve: async (expression, ast) => (expression === '$statusCode' ? 200 : undefined),
+ * }); // => true
+ */
+export const evaluateAsync = async (condition, { resolve } = {}) => {
+  const tree = prepare(condition, resolve, 'evaluateAsync');
+  return toBoolean(await evaluateNodeAsync(tree, resolve));
+};
+
+// util.promisify(evaluate) returns evaluateAsync; Symbol.for keeps this free of node:util.
+evaluate[Symbol.for('nodejs.util.promisify.custom')] = evaluateAsync;
+
+const prepare = (condition, resolve, name) => {
   if (typeof condition !== 'string') {
     throw new TypeError('Criterion condition must be a string');
   }
   if (typeof resolve !== 'function') {
-    throw new TypeError('evaluate requires a "resolve" function in options');
+    throw new TypeError(`${name} requires a "resolve" function in options`);
   }
 
   const { result, tree } = parse(condition);
   if (!result.success) {
     throw new ArazzoCriterionEvaluateError('Invalid criterion condition', { condition });
   }
+  return tree;
+};
 
-  return toBoolean(evaluateNode(tree, resolve));
+// a native Promise means an async resolver, whose Promise would otherwise be
+// compared as a plain object.
+const resolveValue = (resolve, expression, ast) => {
+  const value = resolve(expression, ast);
+  if (value instanceof Promise) {
+    throw new TypeError('resolve returned a Promise; use evaluateAsync to await resolved values');
+  }
+  return value;
 };
 
 const evaluateNode = (node, resolve) => {
@@ -36,13 +79,20 @@ const evaluateNode = (node, resolve) => {
     case 'UnaryExpression':
       return !toBoolean(evaluateNode(node.argument, resolve));
     case 'BinaryExpression':
-      return evaluateComparison(node, resolve);
+      return compare(
+        node.operator,
+        evaluateNode(node.left, resolve),
+        evaluateNode(node.right, resolve),
+      );
     case 'Literal':
       return node.value;
     case 'RuntimeExpression':
-      return resolve(node.text, node.expression);
+      return resolveValue(resolve, node.text, node.expression);
     case 'RuntimeExpressionNavigation':
-      return evaluateNavigation(node, resolve);
+      return navigate(
+        resolveValue(resolve, node.expression.text, node.expression.expression),
+        node.navigation,
+      );
     default:
       throw new ArazzoCriterionEvaluateError(`Unknown AST node type: ${node.type}`);
   }
@@ -60,20 +110,49 @@ const evaluateLogical = (node, resolve) => {
   );
 };
 
-const evaluateNavigation = (node, resolve) => {
-  let value = resolve(node.expression.text, node.expression.expression);
-  for (const step of node.navigation) {
+// the async counterpart of evaluateNode: same cases, each operand awaited in turn
+const evaluateNodeAsync = async (node, resolve) => {
+  switch (node.type) {
+    case 'LogicalExpression':
+      return evaluateLogicalAsync(node, resolve);
+    case 'UnaryExpression':
+      return !toBoolean(await evaluateNodeAsync(node.argument, resolve));
+    case 'BinaryExpression': {
+      const left = await evaluateNodeAsync(node.left, resolve);
+      return compare(node.operator, left, await evaluateNodeAsync(node.right, resolve));
+    }
+    case 'Literal':
+      return node.value;
+    case 'RuntimeExpression':
+      return resolve(node.text, node.expression);
+    case 'RuntimeExpressionNavigation':
+      return navigate(
+        await resolve(node.expression.text, node.expression.expression),
+        node.navigation,
+      );
+    default:
+      throw new ArazzoCriterionEvaluateError(`Unknown AST node type: ${node.type}`);
+  }
+};
+
+const evaluateLogicalAsync = async (node, resolve) => {
+  const left = toBoolean(await evaluateNodeAsync(node.left, resolve));
+  // the right operand is evaluated only when the left one does not decide the result
+  if (node.operator === '&&' ? !left : left) return left;
+  return toBoolean(await evaluateNodeAsync(node.right, resolve));
+};
+
+const navigate = (resolved, navigation) => {
+  let value = resolved;
+  for (const step of navigation) {
     if (value == null) return undefined;
     value = step.type === 'MemberAccess' ? value[step.name] : value[step.value];
   }
   return value;
 };
 
-const evaluateComparison = (node, resolve) => {
-  const left = evaluateNode(node.left, resolve);
-  const right = evaluateNode(node.right, resolve);
-
-  switch (node.operator) {
+const compare = (operator, left, right) => {
+  switch (operator) {
     case '==':
       return looseEquals(left, right);
     case '!=':
@@ -82,9 +161,9 @@ const evaluateComparison = (node, resolve) => {
     case '<=':
     case '>':
     case '>=':
-      return relational(node.operator, left, right);
+      return relational(operator, left, right);
     default:
-      throw new ArazzoCriterionEvaluateError(`Unknown comparison operator: ${node.operator}`);
+      throw new ArazzoCriterionEvaluateError(`Unknown comparison operator: ${operator}`);
   }
 };
 

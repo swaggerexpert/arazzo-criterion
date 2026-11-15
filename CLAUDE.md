@@ -77,6 +77,12 @@ early so the trailing `.member` / `[index]` become criterion accessors (a `Runti
   ASTTranslator (default), CSTTranslator, or null (validation only). Also `options.trace`, `options.stats`.
 - `test(condition)` - Validate a condition, returns boolean.
 - `evaluate(conditionOrAST, { resolve })` - Evaluate against caller-supplied values, returns boolean.
+  Throws a `TypeError` if `resolve` returns a native Promise. `util.promisify(evaluate)` returns
+  `evaluateAsync` (via `Symbol.for('nodejs.util.promisify.custom')`, as ApiDOM's `traverse` does).
+- `evaluateAsync(condition, { resolve })` - Same semantics, `resolve` may return a Promise; returns
+  `Promise<boolean>` and reports every failure as a rejection. `src/evaluate/index.js` has two small
+  tree walkers, `evaluateNode` (sync) and `evaluateNodeAsync` (async, awaits each operand in turn),
+  sharing the comparison (`compare`) and navigation (`navigate`) helpers.
 - `Grammar`, `CSTTranslator`, `ASTTranslator`, `Trace`.
 - `ArazzoCriterionError`, `ArazzoCriterionParseError`, `ArazzoCriterionEvaluateError`.
 

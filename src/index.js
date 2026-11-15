@@ -2,7 +2,7 @@ export { default as Grammar } from './grammar.js';
 
 export { default as parse } from './parse/index.js';
 export { default as test } from './test/index.js';
-export { default as evaluate } from './evaluate/index.js';
+export { default as evaluate, evaluateAsync } from './evaluate/index.js';
 
 export { default as CSTTranslator } from './parse/translators/CSTTranslator.js';
 export { default as ASTTranslator } from './parse/translators/ASTTranslator/index.js';

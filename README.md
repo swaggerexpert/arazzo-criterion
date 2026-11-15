@@ -69,6 +69,7 @@ It supports the `simple` Criterion Object condition defined in the following Ara
       - [Tracing](#tracing)
     - [Validation](#validation)
     - [Evaluation](#evaluation)
+      - [Asynchronous evaluation](#asynchronous-evaluation)
     - [Errors](#errors)
     - [Grammar](#grammar)
 - [More about the `simple` criterion condition](#more-about-the-simple-criterion-condition)
@@ -258,6 +259,26 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
+`evaluate` is synchronous: `resolve` must return the value itself. If it returns a native Promise (for example, `resolve` is an `async` function), `evaluate` throws a `TypeError` instead of comparing the Promise object.
+
+##### Asynchronous evaluation
+
+When runtime expression values are only available asynchronously (for example, a referenced document has to be loaded first), use `evaluateAsync`. It applies the same semantics, but `resolve` may return either the value or a Promise of it, and the result is always a `Promise<boolean>`.
+
+```js
+import { evaluateAsync } from '@swaggerexpert/arazzo-criterion';
+
+const resolve = async (expression, ast) => context[expression];
+
+await evaluateAsync('$statusCode == 200', { resolve }); // => true
+await evaluateAsync('$statusCode == 500 && $response.body.status', { resolve }); // => false
+```
+
+- `&&` and `||` short-circuit: the right operand is resolved only after the left one has settled without deciding the result.
+- Every failure rejects the returned Promise, including invalid input, an invalid condition, and a `resolve` that throws or rejects. `evaluateAsync` never throws synchronously.
+- Values are awaited the way `await` does it: any *thenable* (an object or function with a `then` method) is waited on.
+- `util.promisify(evaluate)` returns `evaluateAsync`.
+
 #### Errors
 
 `@swaggerexpert/arazzo-criterion` provides a structured error class hierarchy,
@@ -273,7 +294,8 @@ import {
 
 **ArazzoCriterionError** is the base class for all errors. **ArazzoCriterionParseError** wraps an unexpected error
 raised during parsing, and **ArazzoCriterionEvaluateError** is thrown by `evaluate` (for example, when the condition
-is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`.
+is not valid). Both extend `ArazzoCriterionError` and include the offending `condition`. `evaluateAsync` rejects with
+the same errors instead of throwing them.
 
 ```js
 import { evaluate, ArazzoCriterionEvaluateError } from '@swaggerexpert/arazzo-criterion';
