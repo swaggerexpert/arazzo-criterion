@@ -13,6 +13,19 @@ and in the `criteria` of Success and Failure Action Objects.
 `@swaggerexpert/arazzo-criterion` is a **parser**, **validator** and **evaluator** for the **`simple`** type of Arazzo Criterion conditions **only**.
 The `regex`, `jsonpath` and `xpath` criterion types are **out of scope** — they delegate to external engines (a regular-expression engine, a [JSONPath](https://github.com/swaggerexpert/jsonpath) engine, an XPath engine) and belong in a higher-level evaluator that composes this package with those.
 
+<table>
+  <tr>
+    <td align="right" valign="middle">
+        <img src="https://raw.githubusercontent.com/swaggerexpert/arazzo-criterion/main/assets/tidelift.webp" alt="Tidelift" width="60" />
+      </td>
+      <td valign="middle">
+        <a href="https://tidelift.com/subscription/pkg/npm-.swaggerexpert-arazzo-criterion?utm_source=npm-swaggerexpert-arazzo-criterion&utm_medium=referral&utm_campaign=readme">
+            Get professionally supported @swaggerexpert/arazzo-criterion with Tidelift Subscription.
+        </a>
+      </td>
+  </tr>
+</table>
+
 The `simple` condition syntax combines literals, comparison and logical operators, property de-reference / index accessors, and [Arazzo Runtime Expressions](https://spec.openapis.org/arazzo/v1.1.0.html#runtime-expressions).
 Runtime Expression operands are parsed by delegating to [@swaggerexpert/arazzo-runtime-expression](https://github.com/swaggerexpert/arazzo-runtime-expression), so their sub-ASTs match that package exactly.
 
@@ -44,19 +57,6 @@ It supports the `simple` Criterion Object condition defined in the following Ara
 - [Arazzo 1.0.0](https://spec.openapis.org/arazzo/v1.0.0.html)
 - [Arazzo 1.0.1](https://spec.openapis.org/arazzo/v1.0.1.html)
 - [Arazzo 1.1.0](https://spec.openapis.org/arazzo/v1.1.0.html)
-
-<table>
-  <tr>
-    <td align="right" valign="middle">
-        <img src="https://raw.githubusercontent.com/swaggerexpert/arazzo-criterion/main/assets/tidelift.webp" alt="Tidelift" width="60" />
-      </td>
-      <td valign="middle">
-        <a href="https://tidelift.com/subscription/pkg/npm-.swaggerexpert-arazzo-criterion?utm_source=npm-swaggerexpert-arazzo-criterion&utm_medium=referral&utm_campaign=readme">
-            Get professionally supported @swaggerexpert/arazzo-criterion with Tidelift Subscription.
-        </a>
-      </td>
-  </tr>
-</table>
 
 ## Table of Contents
 
