@@ -146,7 +146,9 @@ const navigate = (resolved, navigation) => {
   let value = resolved;
   for (const step of navigation) {
     if (value == null) return undefined;
-    value = step.type === 'MemberAccess' ? value[step.name] : value[step.value];
+    const key = step.type === 'MemberAccess' ? step.name : step.value;
+    // only the value's own members: `.constructor` or `.toString` must not reach the prototype
+    value = Object.prototype.hasOwnProperty.call(value, key) ? value[key] : undefined;
   }
   return value;
 };
@@ -173,9 +175,9 @@ const looseEquals = (a, b) => {
   const bNull = b === null || b === undefined;
   if (aNull || bNull) return aNull && bNull;
 
-  // arrays and objects are never equal: the result must not depend on whether
+  // arrays, objects and functions are never equal: the result must not depend on whether
   // `resolve` returned the same reference twice (compare them with a jsonpath criterion)
-  if (typeof a === 'object' || typeof b === 'object') return false;
+  if (isStructured(a) || isStructured(b)) return false;
 
   // string comparisons MUST be case insensitive
   if (typeof a === 'string' && typeof b === 'string') {
@@ -230,6 +232,8 @@ const relational = (operator, a, b) => {
       return false;
   }
 };
+
+const isStructured = (value) => typeof value === 'object' || typeof value === 'function';
 
 // numbers, including BigInts (e.g. from a BigInt-aware JSON parser)
 const isNumber = (value) => typeof value === 'number' || typeof value === 'bigint';

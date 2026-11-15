@@ -89,6 +89,18 @@ describe('evaluate', function () {
       assert.isFalse(evaluate('$response.body#/o == null', { resolve: resolveValues }));
     });
 
+    specify('should treat functions as never equal', function () {
+      const fn = () => 1;
+      const resolveValues = resolverFrom({ '$response.body#/fn': fn });
+
+      assert.isFalse(
+        evaluate('$response.body#/fn == $response.body#/fn', { resolve: resolveValues }),
+      );
+      assert.isTrue(
+        evaluate('$response.body#/fn != $response.body#/fn', { resolve: resolveValues }),
+      );
+    });
+
     specify('should treat null as equal only to null', function () {
       assert.isTrue(evaluate('$response.body.missing == null', { resolve }));
       assert.isFalse(evaluate('$statusCode == null', { resolve }));
@@ -171,6 +183,15 @@ describe('evaluate', function () {
   });
 
   context('navigation', function () {
+    specify('should read only own members of resolved values', function () {
+      assert.isTrue(evaluate('$response.body.constructor == null', { resolve }));
+      assert.isTrue(evaluate('$response.body.toString == null', { resolve }));
+      assert.isTrue(evaluate('$response.body.data[0].hasOwnProperty == null', { resolve }));
+      assert.isTrue(evaluate('$response.body.__proto__ == null', { resolve }));
+      assert.isTrue(evaluate('$response.body.data.length == 1', { resolve }));
+      assert.isTrue(evaluate('$response.body.status.length == 9', { resolve }));
+    });
+
     specify('should dereference members and indices', function () {
       assert.isTrue(evaluate('$response.body.data[0].id > 10', { resolve }));
       assert.isTrue(evaluate('$response.body.data[0].id == 42', { resolve }));
