@@ -43,6 +43,7 @@ conditions, using an ABNF grammar and the apg-lite parser generator. The `regex`
   truthiness). Runtime expression values come from the caller-supplied
   `resolve(expression, ast)` function (raw string + parsed sub-AST).
 - **`src/parse/callbacks/cst.js`** - Generic CST callback factory (copied from the runtime-expression package).
+- **`src/parse/callbacks/operand.js`** - Parser rule callback that rejects operand tokens that are not valid runtime expressions.
 
 ### Grammar Structure
 
@@ -65,9 +66,9 @@ is not absorbed. The split into base + navigation is resolved at AST-build time,
 This makes validity **two-phase**: the grammar accepts a superset (any `$`-token in operand position),
 and the RE reparse rejects tokens that are not valid runtime expressions (e.g. `$nonsense`). A parser
 built from `grammar.bnf` alone is therefore necessary but not sufficient - operands must additionally
-be validated against the Runtime Expressions grammar. `parse()` does both phases for every translator
-(an internal pass collects the operand tokens), so an invalid operand gives `result.success === false`;
-`test()` and `evaluate()` build on it.
+be validated against the Runtime Expressions grammar. `parse()` does both phases in one parse: an apg-lite
+rule callback on `runtime-expression-operand` (`src/parse/callbacks/operand.js`) rejects a token that is not a valid
+runtime expression, so the parse fails like on any other syntax error, for every translator and start rule.
 
 Because the RE parser decides where the expression ends, reference families whose identifiers include
 dots (`$inputs`, `$outputs`, `$workflows.*`, `$components.*`) consume their dots (no `.`-navigation into
