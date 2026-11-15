@@ -89,17 +89,37 @@ describe('evaluate', function () {
       assert.isFalse(evaluate('$response.body#/o == null', { resolve: resolveValues }));
     });
 
-    specify('should treat functions as never equal', function () {
-      const fn = () => 1;
-      const resolveValues = resolverFrom({ '$response.body#/fn': fn });
+    specify(
+      'should treat values outside the JSON value model as never equal and unordered',
+      function () {
+        const symbol = Symbol('s');
+        const values = {
+          '$response.body#/big': 10n,
+          '$response.body#/sym': symbol,
+          '$response.body#/date': new Date(0),
+          '$response.body#/map': new Map(),
+          '$response.body#/boxed': Object(1),
+          '$response.body#/fn': () => 1,
+        };
+        const resolveValues = resolverFrom(values);
+        const holds = (condition) => evaluate(condition, { resolve: resolveValues });
 
-      assert.isFalse(
-        evaluate('$response.body#/fn == $response.body#/fn', { resolve: resolveValues }),
-      );
-      assert.isTrue(
-        evaluate('$response.body#/fn != $response.body#/fn', { resolve: resolveValues }),
-      );
-    });
+        assert.isFalse(holds('$response.body#/big == 10'));
+        assert.isFalse(holds("$response.body#/big == '10'"));
+        assert.isFalse(holds('$response.body#/big < 11'));
+        assert.isFalse(holds('$response.body#/big >= 10'));
+        assert.isFalse(holds('$response.body#/big == $response.body#/big'));
+        assert.isTrue(holds('$response.body#/big != 10'));
+        assert.isFalse(holds('$response.body#/sym == $response.body#/sym'));
+        assert.isFalse(holds('$response.body#/sym <= $response.body#/sym'));
+        assert.isFalse(holds('$response.body#/date == $response.body#/date'));
+        assert.isFalse(holds('$response.body#/date < 1'));
+        assert.isFalse(holds('$response.body#/map == $response.body#/map'));
+        assert.isFalse(holds('$response.body#/boxed == 1'));
+        assert.isFalse(holds('$response.body#/fn == $response.body#/fn'));
+        assert.isTrue(holds('$response.body#/fn != $response.body#/fn'));
+      },
+    );
 
     specify('should treat null as equal only to null', function () {
       assert.isTrue(evaluate('$response.body.missing == null', { resolve }));
@@ -156,21 +176,6 @@ describe('evaluate', function () {
       assert.isFalse(evaluate('$response.body#/t < true', { resolve: resolveValues }));
       assert.isFalse(evaluate('$response.body#/t > true', { resolve: resolveValues }));
       assert.isFalse(evaluate('$response.body#/t >= false', { resolve: resolveValues }));
-    });
-
-    specify('should order and compare BigInts as numbers', function () {
-      const values = { '$response.body#/big': 10n, '$response.body#/huge': 2n ** 64n };
-      const resolveValues = resolverFrom(values);
-
-      assert.isTrue(evaluate('$response.body#/big == 10', { resolve: resolveValues }));
-      assert.isTrue(evaluate("$response.body#/big == '10'", { resolve: resolveValues }));
-      assert.isTrue(evaluate('$response.body#/big < 11', { resolve: resolveValues }));
-      assert.isTrue(evaluate('$response.body#/big >= 10', { resolve: resolveValues }));
-      assert.isTrue(evaluate("$response.body#/big > '9'", { resolve: resolveValues }));
-      assert.isTrue(
-        evaluate('$response.body#/huge > 18446744073709550000', { resolve: resolveValues }),
-      );
-      assert.isFalse(evaluate('$response.body#/big != 10', { resolve: resolveValues }));
     });
 
     specify(

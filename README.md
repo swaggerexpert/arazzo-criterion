@@ -266,8 +266,9 @@ Evaluation follows the "loose comparison" rules from the Arazzo specification:
 - string comparisons are **case-insensitive**;
 - numeric strings are **coerced** to numbers when compared with a number; a numeric string is one in the JSON number format (`42`, `-0.5`, `1e3`) whose value is finite (`1e400` is not), so hex/binary/octal prefixes, leading zeros, a `+` sign, and surrounding whitespace are not numeric;
 - `null` is equal only to `null`; any relational comparison involving `null` is `false`;
-- `<`, `<=`, `>`, `>=` order only two numbers (including `BigInt`s) or two strings (after numeric-string coercion); any other pair (booleans, arrays, objects, mixed types) has no order, so `<` and `>` are `false`, while `<=` and `>=` are `true` only when the pair is equal (e.g. `true <= true`), as in RFC 9535;
+- `<`, `<=`, `>`, `>=` order only two numbers or two strings (after numeric-string coercion); any other pair (booleans, arrays, objects, mixed types) has no order, so `<` and `>` are `false`, while `<=` and `>=` are `true` only when the pair is equal (e.g. `true <= true`), as in RFC 9535;
 - arrays and objects are never equal: `==` is `false` and `!=` is `true` whenever either side is an array or object (even the same value); compare structured values with a `jsonpath` criterion instead;
+- evaluation is defined on the JSON value model (number, string, boolean, null, array, object), so it does not depend on the host language: `resolve` should return JSON values, with numbers as JavaScript numbers. Any other value (a `BigInt`, `Date`, `Map`, `Buffer`, class instance, function or symbol) is never equal and has no order;
 - `.member` and `[index]` read only the resolved value's own members (e.g. `$response.body.constructor` is missing, not the `Object` constructor);
 - a condition **passes** when it evaluates to a truthy value and **fails** on `false`, `null`, or a missing value.
 
