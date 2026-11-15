@@ -35,6 +35,31 @@ describe('evaluate', function () {
       assert.isTrue(evaluate('$inputs.age == 30', { resolve }));
     });
 
+    specify('should coerce only strings in the JSON number format', function () {
+      const values = {
+        '$response.body#/exp': '1e3',
+        '$response.body#/neg': '-0.5',
+        '$response.body#/hex': '0x10',
+        '$response.body#/bin': '0b11',
+        '$response.body#/oct': '0o17',
+        '$response.body#/padded': ' 42 ',
+        '$response.body#/zero': '012',
+        '$response.body#/plus': '+5',
+      };
+      const resolveValues = resolverFrom(values);
+
+      assert.isTrue(evaluate('$response.body#/exp == 1000', { resolve: resolveValues }));
+      assert.isTrue(evaluate('$response.body#/neg == -0.5', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/hex == 16', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/bin == 3', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/oct == 15', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/padded == 42', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/zero == 12', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/plus == 5', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/hex > 15', { resolve: resolveValues }));
+      assert.isFalse(evaluate('$response.body#/padded < 43', { resolve: resolveValues }));
+    });
+
     specify('should treat null as equal only to null', function () {
       assert.isTrue(evaluate('$response.body.missing == null', { resolve }));
       assert.isFalse(evaluate('$statusCode == null', { resolve }));
