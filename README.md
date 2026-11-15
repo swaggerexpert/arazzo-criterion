@@ -73,6 +73,7 @@ It supports the `simple` Criterion Object condition defined in the following Ara
     - [Errors](#errors)
     - [Grammar](#grammar)
 - [More about the `simple` criterion condition](#more-about-the-simple-criterion-condition)
+  - [Limitations](#limitations)
 - [License](#license)
 
 ## Getting started
@@ -439,6 +440,39 @@ B                = %x20 / %x09 / %x0A / %x0D      ; space, tab, LF, CR
 ALPHA          = %x41-5A / %x61-7A   ; A-Z / a-z
 DIGIT          = %x30-39             ; 0-9
 ```
+
+### Limitations
+
+A runtime-expression operand cannot contain whitespace or any of the criterion-significant characters `! & ( ) < = > { | }`.
+
+Runtime expressions and criterion operators share an alphabet: a query, header or path name, or an `operationId`, may legitimately contain
+`=`, `&`, `<`, `>` or spaces, but inside a condition the same characters start operators. `$request.query.a=b == 1` could be the operand
+`$request.query.a` followed by a malformed operator, or the operand `$request.query.a=b` compared with `1`; no context-free grammar can
+tell them apart. The grammar therefore matches an operand as one bounded token that stops at these characters, so the common case
+(`$request.query.limit == 10`) parses correctly and an operand that contains them is rejected rather than silently mis-parsed:
+
+```js
+import { test } from '@swaggerexpert/arazzo-criterion';
+
+test('$request.query.limit == 10'); // => true
+test('$request.query.a=b == 1'); // => false ('=' in a query name)
+test('$request.query.a&b'); // => false ('&' in a query name)
+test('$sourceDescriptions.d.get<Pet> != null'); // => false ('<' and '>' in an operationId)
+test('$response.body#/a=b == 1'); // => false ('=' in a JSON Pointer reference token)
+test('$response.body#/a~1b == 1'); // => true (ordinary JSON Pointers are fine)
+```
+
+JSON Pointer is no escape hatch: a pointer has no terminator, so `$response.body#/a=b == 1` is just as ambiguous. The specification
+defines no quoting mechanism for `simple` operands, and inventing one would make conditions non-portable. To reach a member whose name
+contains these characters, use a `jsonpath` criterion, which quotes member names:
+
+```yaml
+- context: $response.body
+  type: jsonpath
+  condition: $.pets[?@['a=b'] == 1]
+```
+
+There is no workaround for query, header or path names, or `operationId`s, that contain these characters.
 
 ## License
 
